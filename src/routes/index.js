@@ -1,2 +1,4 @@
-import userRouter from './userRouter'
-export default routes = {userRouter}
+import userRouter from "./userRouter";
+
+const routes = { userRouter };
+export default routes;
