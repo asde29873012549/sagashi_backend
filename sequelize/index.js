@@ -46,11 +46,15 @@ modelDefiners.forEach((model) => {
 });
 
 associations(sequelize);
-
+/*
 async function syncDB() {
 	await sequelize.sync();
 }
 
 syncDB();
+*/
+
+const Model = sequelize.models
 
 export default sequelize;
+export {Model};

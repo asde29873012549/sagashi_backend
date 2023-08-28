@@ -5,7 +5,7 @@ const Discounts = (sequelize) =>
 		"Discounts",
 		{
 			percent: {
-				type: DataTypes.DECIMAL(1, 2),
+				type: DataTypes.DECIMAL(3, 2),
 				allowNull: false,
 			},
 			active: {

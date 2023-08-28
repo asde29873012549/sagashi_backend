@@ -1,8 +1,8 @@
 class AppError extends Error {
-	constructor(message, code) {
+	constructor(message, status) {
 		super(message);
 
-		this.code = code;
+		this.status = status;
 		this.message = message;
 	}
 }
@@ -91,9 +91,15 @@ class RateLimitExceededError extends AppError {
 	}
 }
 
-//	Occurs when a user exceeds their rate limit for API requests.
+//	Occurs when there's problem with Redis.
 class RedisError extends AppError {
 	constructor(message = "Redis unavailable") {
+		super(message, 500);
+	}
+}
+
+class StorageError extends AppError {
+	constructor(message = "Cloud Storage upload failed") {
 		super(message, 500);
 	}
 }
@@ -113,4 +119,5 @@ export {
 	ServiceUnavailableError,
 	RateLimitExceededError,
 	RedisError,
+	StorageError
 };

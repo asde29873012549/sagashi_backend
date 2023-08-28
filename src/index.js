@@ -3,7 +3,8 @@ import * as url from "url";
 import * as dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import userRoutes from "./routes/userRouter.js";
+import helmet from "helmet";
+import listingRoutes from "./routes/listingRouter.js";
 
 import errorHandler from "./middleware/errorhandler.js";
 
@@ -24,7 +25,8 @@ const cors_option = {
 app.use(cors(cors_option));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/users", userRoutes);
+app.use("/listing", listingRoutes);
+app.use(helmet());
 app.use(errorHandler);
 
 app.get("*", (req, res) => {
