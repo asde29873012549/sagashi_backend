@@ -1,6 +1,6 @@
 import { AppError } from "../utils/api_error.js";
 
-export default function error_handler(err, req, res) {
+export default function error_handler(err, req, res, next) {
 	if (err instanceof AppError) {
 		return res.status(err.code).json({
 			status: "error",
