@@ -1,23 +1,19 @@
-import crypto from "crypto";
 import { Storage } from "@google-cloud/storage";
+import storageNameGenerator from "./storageNameGenerator.js";
 
-
-const bucketName = 'your-unique-bucket-name';
-const storage = new Storage()
+const bucketName = "sagashi_products_data";
+const storage = new Storage();
 
 async function createFile(file, type) {
-	const fileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex');
-
+	const fileName = storageNameGenerator();
 	await storage.bucket(bucketName).file(fileName).save(file, {
 		resumable: false,
-		contentType:type
+		contentType: type,
 	});
 
-	const fileUri = `https://storage.googleapis.com/${bucketName}/${fileName}`
+	const fileUri = `https://storage.googleapis.com/${bucketName}/${fileName}`;
 
-	return fileUri
-	
+	return fileUri;
 }
 
-
-export default createFile
+export default createFile;

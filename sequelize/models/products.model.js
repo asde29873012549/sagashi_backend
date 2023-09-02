@@ -40,6 +40,9 @@ const Products = (sequelize) =>
 				type: DataTypes.SMALLINT,
 				allowNull: false,
 			},
+			tags: {
+				type: DataTypes.STRING(512),
+			},
 		},
 		{
 			sequelize,

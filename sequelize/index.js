@@ -54,7 +54,7 @@ async function syncDB() {
 syncDB();
 */
 
-const Model = sequelize.models
+const Model = sequelize.models;
 
 export default sequelize;
-export {Model};
+export { Model };

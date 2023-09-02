@@ -44,7 +44,7 @@ class ConflictError extends AppError {
 
 //	Occurs when there's a conflict, such as trying to create a resource that already exists
 class ValidationError extends AppError {
-	constructor(message = "Wrong Input Data") {
+	constructor(message = "Wrong Input Data / Params") {
 		super(message, 422);
 	}
 }
@@ -79,7 +79,7 @@ class StockUnavailableError extends AppError {
 
 //	Occurs when a required service (e.g., Redis) is temporarily unavailable.
 class ServiceUnavailableError extends AppError {
-	constructor(message = "Stock is currently unavailable") {
+	constructor(message = "Service is currently unavailable") {
 		super(message, 503);
 	}
 }
@@ -119,5 +119,5 @@ export {
 	ServiceUnavailableError,
 	RateLimitExceededError,
 	RedisError,
-	StorageError
+	StorageError,
 };

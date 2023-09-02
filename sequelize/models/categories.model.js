@@ -14,7 +14,7 @@ const Categories = (sequelize) =>
 			start: {
 				type: DataTypes.SMALLINT,
 				unique: true,
-				primaryKey: true
+				primaryKey: true,
 			},
 			end: {
 				type: DataTypes.SMALLINT,
