@@ -6,8 +6,7 @@ const Users = (sequelize) =>
 		{
 			username: {
 				type: DataTypes.STRING(80),
-				allowNull: false,
-				unique: true,
+				primaryKey: true,
 			},
 			password: {
 				type: DataTypes.STRING(80),
@@ -26,7 +25,6 @@ const Users = (sequelize) =>
 			underscored: true,
 			freezeTableName: true,
 			schema: "sagashi",
-			indexes: [{ unique: true, fields: ["username"] }],
 		},
 	);
 

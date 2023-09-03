@@ -1,19 +1,38 @@
 import sequelize, { Model } from "../../../sequelize/index.js";
 import createFile from "../../utils/gcp/cloudStorage.js";
-import { DatabaseError, StorageError } from "../../utils/api_error.js";
+import { DatabaseError, StorageError, ValidationError } from "../../utils/api_error.js";
 
 export default async function dbCreateListing(req) {
 	const products = Model.Products;
+	const products_to_be_sync = Model.Products_to_be_sync;
 	const img = req.files;
-	const { cat, size, designer, item_name, color, condition, price, desc, tags } = req.body;
-	const secondary_image = {};
+	const { 
+		department,
+		category,
+		subCategory,
+		subCategory_id,
+		seller_name,
+		item_name,
+		designer,
+		designer_id,
+		size,
+		size_id,
+		color,
+		color_id,
+		condition,
+		condition_id,
+		price,
+		desc,
+		tags
+	} = req.body;
+	const rest_of_image = {};
 	let fileUriArray;
 
 	try {
 		fileUriArray = await Promise.all(img.map((image) => createFile(image.buffer)));
 		if (fileUriArray.length > 1) {
 			fileUriArray.slice(1).forEach((file, index) => {
-				secondary_image[`image_${index}`] = file;
+				rest_of_image[`image_${index}`] = file;
 			});
 		}
 	} catch (err) {
@@ -24,35 +43,71 @@ export default async function dbCreateListing(req) {
 	const slug = tags.split(regex);
 	const purifyTags = slug.join("#");
 
+	const numericPrice = Number(price)
+	if (Number.isNaN(numericPrice)) {
+		throw new ValidationError()
+	}
+
+	const primary_image = fileUriArray[0]
+	const secondary_image = JSON.stringify(rest_of_image)
+
 	try {
 		const result = await sequelize.transaction(async (t) => {
 			const prod = await products.create(
 				{
 					name: item_name,
-					prod_cat_ref_start: cat,
+					prod_cat_ref_start: subCategory_id,
 					stock: 1,
-					size_id: size,
-					designer_id: designer,
-					color_id: color,
-					condition_id: condition,
-					price: Number(price),
+					size_id,
+					designer_id,
+					color_id,
+					condition_id,
+					price: numericPrice,
 					desc,
 					tags: purifyTags,
-					primary_image: fileUriArray[0],
-					secondary_image: JSON.stringify(secondary_image),
+					primary_image,
+					secondary_image
 				},
 				{ transaction: t },
 			);
 
-			return prod;
+			if (!prod) return null;
+
+			const prod_sync = await products_to_be_sync.create(
+				{
+					prod_id: Number(prod.dataValues.id),
+					seller_name,
+					name: item_name,
+					department,
+					category,
+					sub_category: subCategory,
+					designer,
+					stock: 1,
+					price: numericPrice,
+					desc,
+					primary_image,
+					secondary_image,
+					status: 1,
+					color,
+					discount: 0,
+					condition,
+					tags,
+					size
+				},
+				{ transaction: t },
+			);
+
+			return prod_sync;
+
 		});
 
 		if (!result) {
 			throw new DatabaseError();
 		} else {
-			return "Listing upload sucessfully";
+			return "Listing uploaded sucessfully";
 		}
 	} catch (err) {
+		console.log(err);
 		throw new DatabaseError();
 	}
 }

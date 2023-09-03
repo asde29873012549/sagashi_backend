@@ -18,8 +18,6 @@ const applyAssociations = (sequelize) => {
 		Sizes,
 		Address,
 		Users,
-		Tags,
-		ProductTags,
 	} = sequelize.models;
 
 	// Categories < Sizes => One-To-Many
@@ -29,32 +27,32 @@ const applyAssociations = (sequelize) => {
 	// Users < Chatrooms => One-To-Many
 	Users.hasMany(Chatrooms, {
 		foreignKey: {
-			name: "last_sent_user_id",
+			name: "last_sent_user_name",
 		},
 	});
 	Users.hasMany(Chatrooms, {
 		foreignKey: {
-			name: "seller_id",
+			name: "seller_name",
 		},
 	});
 	Users.hasMany(Chatrooms, {
 		foreignKey: {
-			name: "buyer_id",
+			name: "buyer_name",
 		},
 	});
 	Chatrooms.belongsTo(Users, {
 		foreignKey: {
-			name: "last_sent_user_id",
+			name: "last_sent_user_name",
 		},
 	});
 	Chatrooms.belongsTo(Users, {
 		foreignKey: {
-			name: "seller_id",
+			name: "seller_name",
 		},
 	});
 	Chatrooms.belongsTo(Users, {
 		foreignKey: {
-			name: "buyer_id",
+			name: "buyer_name",
 		},
 	});
 
@@ -65,44 +63,50 @@ const applyAssociations = (sequelize) => {
 	// Users < Follows One-To-Many
 	Users.hasMany(Follows, {
 		foreignKey: {
-			name: "user_id",
-			type: DataTypes.INTEGER,
+			name: "user_name",
 		},
 	});
 	Users.hasMany(Follows, {
 		foreignKey: {
-			name: "follower_id",
-			type: DataTypes.INTEGER,
+			name: "follower_name",
 		},
 	});
 	Follows.belongsTo(Users, {
 		foreignKey: {
-			name: "user_id",
-			type: DataTypes.INTEGER,
+			name: "user_name",
 		},
 	});
 	Follows.belongsTo(Users, {
 		foreignKey: {
-			name: "follower_id",
-			type: DataTypes.INTEGER,
+			name: "follower_name",
 		},
 	});
 
 	// Users <> Products Many-To-Many through Likes
-	Users.belongsToMany(Products, { through: Likes });
-	Products.belongsToMany(Users, { through: Likes });
+	Users.belongsToMany(Products, {
+		through: {
+			model: Likes,
+		},
+		foreignKey: "user_name",
+		otherKey: "product_id",
+	});
+	Products.belongsToMany(Users, {
+		through: {
+			model: Likes,
+		},
+		foreignKey: "product_id",
+		otherKey: "user_name",
+	});
 
 	// Users < Messages One-To-Many
 	Users.hasMany(Messages, {
 		foreignKey: {
-			name: "sender_id",
-			type: DataTypes.INTEGER,
+			name: "sender_name",
 		},
 	});
 	Messages.belongsTo(Users, {
 		foreignKey: {
-			name: "sender_id",
-			type: DataTypes.INTEGER,
+			name: "sender_name",
 		},
 	});
 
@@ -111,23 +115,42 @@ const applyAssociations = (sequelize) => {
 	Messages.belongsTo(Chatrooms);
 
 	// Users < Notifications One-To-Many
-	Users.hasMany(Notifications);
-	Notifications.belongsTo(Users, {
+	Users.hasMany(Notifications, {
 		foreignKey: {
-			name: "receiver_id",
-			type: DataTypes.INTEGER,
+			name: "receiver_name",
+		},
+	});
+	Users.hasMany(Notifications, {
+		foreignKey: {
+			name: "sender_name",
 		},
 	});
 	Notifications.belongsTo(Users, {
 		foreignKey: {
-			name: "sender_id",
-			type: DataTypes.INTEGER,
+			name: "receiver_name",
+		},
+	});
+	Notifications.belongsTo(Users, {
+		foreignKey: {
+			name: "sender_name",
 		},
 	});
 
 	// Users <> Products Many-To-Many through Offers
-	Users.belongsToMany(Products, { through: Offers });
-	Products.belongsToMany(Users, { through: Offers });
+	Users.belongsToMany(Products, {
+		through: {
+			model: Offers,
+		},
+		foreignKey: "user_name",
+		otherKey: "product_id",
+	});
+	Products.belongsToMany(Users, {
+		through: {
+			model: Offers,
+		},
+		foreignKey: "product_id",
+		otherKey: "user_name",
+	});
 
 	// Categories < Products One-To-Many
 	Categories.hasMany(Products, {
@@ -157,21 +180,49 @@ const applyAssociations = (sequelize) => {
 	Discounts.hasMany(Products);
 	Products.belongsTo(Discounts);
 
-	// Products <> Tags Many-To-Many through ProductTags
-	Products.belongsToMany(Tags, { through: ProductTags });
-	Tags.belongsToMany(Products, { through: ProductTags });
-
 	// Users <> Products Many-To-Many through RecentlyViewed
-	Users.belongsToMany(Products, { through: RecentlyViewed });
-	Products.belongsToMany(Users, { through: RecentlyViewed });
+	Users.belongsToMany(Products, {
+		through: {
+			model: RecentlyViewed,
+		},
+		foreignKey: "user_name",
+		otherKey: "product_id",
+	});
+	Products.belongsToMany(Users, {
+		through: {
+			model: RecentlyViewed,
+		},
+		foreignKey: "product_id",
+		otherKey: "user_name",
+	});
 
 	// Users <> Products Many-To-Many through ShoppingCart
-	Users.belongsToMany(Products, { through: ShoppingCart });
-	Products.belongsToMany(Users, { through: ShoppingCart });
+	Users.belongsToMany(Products, {
+		through: {
+			model: ShoppingCart,
+		},
+		foreignKey: "user_name",
+		otherKey: "product_id",
+	});
+	Products.belongsToMany(Users, {
+		through: {
+			model: ShoppingCart,
+		},
+		foreignKey: "product_id",
+		otherKey: "user_name",
+	});
 
 	// Users < Address One-To-Many
-	Users.hasMany(Address);
-	Address.belongsTo(Users);
+	Users.hasMany(Address, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Address.belongsTo(Users, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
 };
 
 export default applyAssociations;

@@ -8,7 +8,7 @@ const Categories = (sequelize) =>
 				type: DataTypes.SMALLINT,
 			},
 			name: {
-				type: DataTypes.STRING(50),
+				type: DataTypes.STRING(30),
 				allowNull: false,
 			},
 			start: {

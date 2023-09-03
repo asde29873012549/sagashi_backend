@@ -46,7 +46,7 @@ export default async function dbGetListing(req) {
 		// get all listing
 		const es_query = query_template;
 		es_query.query.match_all = {};
-		es_query.search_after = JSON.parse(decodeURI(req.query.cursor));
+		if (validated.includes("cursor")) es_query.search_after = JSON.parse(decodeURI(req.query.cursor));
 
 		try {
 			const data = await client.search(es_query);

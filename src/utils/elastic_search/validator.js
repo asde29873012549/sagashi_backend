@@ -23,8 +23,10 @@ const validator = (valid_query, req) => {
 	}
 
 	// price_ceil & price_ground query
-	if (req_queries.includes("price_ceil") && Number.isNaN(Number(req.query.price_ceil))) throw new ValidationError();
-	if (req_queries.includes("price_ground") && Number.isNaN(Number(req.query.price_ground))) throw new ValidationError();
+	if (req_queries.includes("price_ceil") && Number.isNaN(Number(req.query.price_ceil)))
+		throw new ValidationError();
+	if (req_queries.includes("price_ground") && Number.isNaN(Number(req.query.price_ground)))
+		throw new ValidationError();
 
 	// newArrivals params
 	if (req_queries.includes("newArrivals")) {

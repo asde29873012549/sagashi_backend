@@ -1,8 +1,8 @@
 import multer from "multer";
 
 const limits = {
-	parts: 15,
-	fields: 9,
+	parts: 23,
+	fields: 17,
 	files: 6,
 	fileSize: 5 * 1024 * 1024,
 };

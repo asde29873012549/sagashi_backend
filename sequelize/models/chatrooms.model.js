@@ -18,7 +18,7 @@ const Chatrooms = (sequelize) =>
 			indexes: [
 				{
 					using: "BTREE",
-					fields: ["seller_id"],
+					fields: ["seller_name"],
 				},
 			],
 		},

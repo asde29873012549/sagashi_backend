@@ -8,7 +8,8 @@ const listingController = {
 			const data = await dbCreateListing(req);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
-			res.status(err.status).json(new Response(err).fail());
+			console.log(err)
+			res.status(err.status || 500).json(new Response(err).fail());
 		}
 	},
 	getListing: async (req, res) => {
