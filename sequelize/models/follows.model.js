@@ -12,7 +12,7 @@ const Follows = (sequelize) =>
 			indexes: [
 				{
 					using: "BTREE",
-					fields: ["user_id", "follower_id"],
+					fields: ["user_name", "follower_name"],
 				},
 			],
 		},

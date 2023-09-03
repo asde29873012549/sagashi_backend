@@ -22,7 +22,7 @@ const Notifications = (sequelize) =>
 			indexes: [
 				{
 					using: "BTREE",
-					fields: ["receiver_id"],
+					fields: ["receiver_name"],
 				},
 			],
 		},

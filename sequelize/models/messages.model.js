@@ -26,7 +26,7 @@ const Messages = (sequelize) =>
 				},
 				{
 					using: "BTREE",
-					fields: ["sender_id"],
+					fields: ["sender_name"],
 				},
 			],
 		},

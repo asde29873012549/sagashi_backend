@@ -23,7 +23,7 @@ const Offers = (sequelize) =>
 			indexes: [
 				{
 					using: "BTREE",
-					fields: ["user_id", "product_id"],
+					fields: ["user_name", "product_id"],
 				},
 			],
 		},

@@ -12,7 +12,7 @@ const Likes = (sequelize) =>
 			indexes: [
 				{
 					using: "BTREE",
-					fields: ["user_id"],
+					fields: ["user_name"],
 				},
 				{
 					using: "BTREE",
