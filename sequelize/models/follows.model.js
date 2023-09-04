@@ -1,7 +1,24 @@
+import { DataTypes } from "sequelize";
+
 const Follows = (sequelize) =>
 	sequelize.define(
 		"Follows",
-		{},
+		{
+			user_name: {
+				type: DataTypes.STRING(80),
+				references: {
+					model: "Users",
+					key: "username",
+				},
+			},
+			folower_name: {
+				type: DataTypes.STRING(80),
+				references: {
+					model: "Users",
+					key: "username",
+				},
+			},
+		},
 		{
 			sequelize,
 			underscored: true,

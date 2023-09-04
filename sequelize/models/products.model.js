@@ -4,44 +4,73 @@ const Products = (sequelize) =>
 	sequelize.define(
 		"Products",
 		{
+			seller_name: {
+				type: DataTypes.STRING(80),
+				allowNull: false,
+				references: {
+					model: "Users",
+					key: "username",
+				},
+			},
 			name: {
 				type: DataTypes.STRING,
-				allowNull: false,
 			},
 			stock: {
 				type: DataTypes.SMALLINT,
-				allowNull: false,
 				defaultValue: 1,
 			},
 			price: {
 				type: DataTypes.DECIMAL(10, 2),
-				allowNull: false,
 			},
 			desc: {
 				type: DataTypes.TEXT,
 			},
 			primary_image: {
 				type: DataTypes.STRING(512),
-				allowNull: false,
 			},
 			secondary_image: {
 				type: DataTypes.JSONB,
 			},
 			status: {
 				type: DataTypes.SMALLINT,
-				allowNull: false,
 				defaultValue: 1,
 			},
 			color_id: {
 				type: DataTypes.SMALLINT,
-				allowNull: false,
 			},
 			condition_id: {
 				type: DataTypes.SMALLINT,
-				allowNull: false,
 			},
 			tags: {
 				type: DataTypes.STRING(512),
+			},
+			prod_cat_ref_start: {
+				type: DataTypes.INTEGER,
+				references: {
+					model: "Categories",
+					key: "start",
+				},
+			},
+			designer_id: {
+				type: DataTypes.INTEGER,
+				references: {
+					model: "Designers",
+					key: "id",
+				},
+			},
+			size_id: {
+				type: DataTypes.INTEGER,
+				references: {
+					model: "Sizes",
+					key: "id",
+				},
+			},
+			discount_id: {
+				type: DataTypes.INTEGER,
+				references: {
+					model: "Discounts",
+					key: "id",
+				},
 			},
 		},
 		{
@@ -65,6 +94,10 @@ const Products = (sequelize) =>
 				{
 					using: "BTREE",
 					fields: ["size_id"],
+				},
+				{
+					using: "BTREE",
+					fields: ["seller_name"],
 				},
 			],
 		},

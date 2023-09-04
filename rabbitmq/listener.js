@@ -3,7 +3,7 @@ import mq_connect from "./client.js";
 
 dotenv.config();
 
-const mq_queue = process.env.RABBITMQ_QUEUE
+const mq_queue = process.env.RABBITMQ_QUEUE;
 
 async function mq_listener(payload) {
 	const connection = await mq_connect();
@@ -18,4 +18,4 @@ async function mq_listener(payload) {
 	}
 }
 
-export default mq_listener
+export default mq_listener;

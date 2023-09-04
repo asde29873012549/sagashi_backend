@@ -4,6 +4,20 @@ const Notifications = (sequelize) =>
 	sequelize.define(
 		"Notifications",
 		{
+			sender_name: {
+				type: DataTypes.STRING(80),
+				references: {
+					model: "Users",
+					key: "username",
+				},
+			},
+			receiver_name: {
+				type: DataTypes.STRING(80),
+				references: {
+					model: "Users",
+					key: "username",
+				},
+			},
 			message: {
 				type: DataTypes.TEXT,
 				allowNull: false,

@@ -1,7 +1,17 @@
+import { DataTypes } from "sequelize";
+
 const FeaturedDesigners = (sequelize) =>
 	sequelize.define(
 		"FeaturedDesigners",
-		{},
+		{
+			designer_id: {
+				type: DataTypes.STRING(40),
+				references: {
+					model: "Designers",
+					key: "id",
+				},
+			},
+		},
 		{
 			sequelize,
 			underscored: true,

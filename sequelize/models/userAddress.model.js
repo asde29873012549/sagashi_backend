@@ -4,6 +4,13 @@ const userAddress = (sequelize) =>
 	sequelize.define(
 		"Address",
 		{
+			user_name: {
+				type: DataTypes.STRING(80),
+				references: {
+					model: "Users",
+					key: "username",
+				},
+			},
 			address: {
 				type: DataTypes.STRING,
 			},

@@ -1,5 +1,5 @@
 import sequelize from "../config/db.js";
-// import associations from "./associations.js";
+import associations from "./associations.js";
 
 import categories from "./models/categories.model.js";
 import chatrooms from "./models/chatrooms.model.js";
@@ -19,12 +19,16 @@ import userAddress from "./models/userAddress.model.js";
 import users from "./models/users.model.js";
 import products_to_be_sync from "./models/products_to_be_sync.model.js";
 
-// const pg_channel = process.env.PG_NOTIFY_CHANNEL
+const pg_channel = process.env.PG_NOTIFY_CHANNEL;
 
 const modelDefiners = [
+	users,
+	products,
+	designers,
+	sizes,
+	userAddress,
 	categories,
 	chatrooms,
-	designers,
 	discounts,
 	featuredDesigners,
 	follows,
@@ -32,12 +36,8 @@ const modelDefiners = [
 	messages,
 	notifications,
 	offers,
-	products,
 	recentlyViewed,
 	shoppingCart,
-	sizes,
-	userAddress,
-	users,
 	products_to_be_sync,
 ];
 
@@ -45,16 +45,14 @@ modelDefiners.forEach((model) => {
 	model(sequelize);
 });
 
-/*
 associations(sequelize);
-
 
 async function syncDB() {
 	await sequelize.sync({
-		schema:"sagashi"
+		schema: "sagashi",
 	});
 }
-
+/*
 await syncDB();
 
 
