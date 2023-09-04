@@ -15,8 +15,8 @@ const sequelize = new Sequelize(db, user, password, {
 		max: 10,
 		min: 1,
 		acquire: 30000,
-		idle: 10000
-	  }
+		idle: 10000,
+	},
 });
 
 export default sequelize;

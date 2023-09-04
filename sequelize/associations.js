@@ -20,6 +20,18 @@ const applyAssociations = (sequelize) => {
 		Users,
 	} = sequelize.models;
 
+	// Users < Products => One-To-Many
+	Users.hasMany(Products, {
+		foreignKey: {
+			name: "seller_name",
+		},
+	});
+	Products.belongsTo(Users, {
+		foreignKey: {
+			name: "seller_name",
+		},
+	});
+
 	// Categories < Sizes => One-To-Many
 	Categories.hasMany(Sizes);
 	Sizes.belongsTo(Categories);

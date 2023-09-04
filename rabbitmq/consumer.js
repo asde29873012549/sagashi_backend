@@ -1,15 +1,15 @@
 import * as dotenv from "dotenv";
 import mq_connect from "./client.js";
 
-import es_client from "../elastic_search/client.js"
+import es_client from "../elastic_search/client.js";
 
 dotenv.config();
 
-const product_index = process.env.ES_PRODUCT_INDEX
-const mq_queue = process.env.RABBITMQ_QUEUE
+const product_index = process.env.ES_PRODUCT_INDEX;
+const mq_queue = process.env.RABBITMQ_QUEUE;
 
 async function mq_consumer() {
-	console.log('rabbitmq consumer start consuming')
+	console.log("rabbitmq consumer start consuming");
 	const connection = await mq_connect();
 	try {
 		const channel = await connection.createChannel();
@@ -20,20 +20,17 @@ async function mq_consumer() {
 			async (message) => {
 				const res = JSON.parse(message.content.toString());
 				if (res) {
-					const {
-						prod_id, 
-						sub_category, 
-						...rest_data
-					} = res.data
+					const { prod_id, sub_category, ...rest_data } = res.data;
 
 					const create_doc = await es_client.index({
 						index: product_index,
+						id: prod_id,
 						document: {
-							id:prod_id,
+							id: prod_id,
 							subCategory: sub_category,
-							...rest_data
-						}
-					})
+							...rest_data,
+						},
+					});
 
 					if (create_doc) channel.ack(message);
 				}

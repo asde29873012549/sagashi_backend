@@ -4,6 +4,20 @@ const Messages = (sequelize) =>
 	sequelize.define(
 		"Messages",
 		{
+			sender_name: {
+				type: DataTypes.STRING(80),
+				references: {
+					model: "Users",
+					key: "username",
+				},
+			},
+			chatroom_id: {
+				type: DataTypes.INTEGER,
+				references: {
+					model: "Chatrooms",
+					key: "id",
+				},
+			},
 			text: {
 				type: DataTypes.TEXT,
 				allowNull: false,

@@ -6,7 +6,7 @@ export default async function dbCreateListing(req) {
 	const products = Model.Products;
 	const products_to_be_sync = Model.Products_to_be_sync;
 	const img = req.files;
-	const { 
+	const {
 		department,
 		category,
 		subCategory,
@@ -22,11 +22,17 @@ export default async function dbCreateListing(req) {
 		condition,
 		condition_id,
 		price,
-		desc,
-		tags
 	} = req.body;
 	const rest_of_image = {};
 	let fileUriArray;
+
+	const { desc, tags, ...rest_body } = req.body;
+
+	Object.values(rest_body).forEach((field) => {
+		if (!field || field === " ") {
+			throw new ValidationError();
+		}
+	});
 
 	try {
 		fileUriArray = await Promise.all(img.map((image) => createFile(image.buffer)));
@@ -40,16 +46,17 @@ export default async function dbCreateListing(req) {
 	}
 
 	const regex = /[^\w\d]+/g;
-	const slug = tags.split(regex);
-	const purifyTags = slug.join("#");
+	const slug = tags && tags.split(regex);
+	const purifyTags = slug && slug.join("#");
 
-	const numericPrice = Number(price)
+	const numericPrice = Number(price);
 	if (Number.isNaN(numericPrice)) {
-		throw new ValidationError()
+		throw new ValidationError();
 	}
 
-	const primary_image = fileUriArray[0]
-	const secondary_image = JSON.stringify(rest_of_image)
+	const primary_image = fileUriArray[0];
+	const secondary_image =
+		Object.keys(rest_of_image).length > 0 ? JSON.stringify(rest_of_image) : null;
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
@@ -66,7 +73,7 @@ export default async function dbCreateListing(req) {
 					desc,
 					tags: purifyTags,
 					primary_image,
-					secondary_image
+					secondary_image,
 				},
 				{ transaction: t },
 			);
@@ -92,13 +99,12 @@ export default async function dbCreateListing(req) {
 					discount: 0,
 					condition,
 					tags,
-					size
+					size,
 				},
 				{ transaction: t },
 			);
 
 			return prod_sync;
-
 		});
 
 		if (!result) {

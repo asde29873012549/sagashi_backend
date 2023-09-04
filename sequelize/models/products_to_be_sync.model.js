@@ -74,7 +74,7 @@ const Products_to_be_sync = (sequelize) =>
 			size: {
 				type: DataTypes.STRING(10),
 				allowNull: false,
-			}
+			},
 		},
 		{
 			sequelize,
