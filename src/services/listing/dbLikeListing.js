@@ -25,7 +25,7 @@ export default async function dbLikeListing(req) {
 				const created = await likes.create(
 					{
 						user_name: "noah",
-						product_id: 1,
+						product_id: listing_id,
 					},
 					{ transaction: t },
 				);

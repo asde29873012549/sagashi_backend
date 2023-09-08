@@ -4,7 +4,7 @@ import { DatabaseError } from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbGetLikeListing(req) {
+export default async function dbGetUserLikeListing(req) {
 	const likes = Model.Likes;
 
 	const { username } = req.params;

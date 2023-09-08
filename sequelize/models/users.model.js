@@ -14,10 +14,21 @@ const Users = (sequelize) =>
 			},
 			fullname: {
 				type: DataTypes.STRING(70),
-				allowNull: false,
 			},
 			avatar: {
 				type: DataTypes.STRING,
+			},
+			email: {
+				type: DataTypes.STRING(100),
+			},
+			birth_date: {
+				type: DataTypes.DATEONLY,
+			},
+			gender: {
+				type: DataTypes.STRING(10),
+			},
+			country: {
+				type: DataTypes.STRING(100),
 			},
 		},
 		{
