@@ -1,7 +1,8 @@
 import dbCreateListing from "../services/listing/dbCreateListing.js";
 import dbGetListing from "../services/listing/dbGetListing.js";
 import dbLikeListing from "../services/listing/dbLikeListing.js";
-import dbGetLikeListing from "../services/listing/dbGetLikeListing.js";
+import dbGetUserLikeListing from "../services/listing/dbGetUserLikeListing.js";
+import dbGetListingLikeCount from "../services/listing/dbGetListingLikeCount.js";
 import dbSaveListingDraft from "../services/listing/dbSaveListingDraft.js";
 import dbGetListingDraft from "../services/listing/dbGetListingDraft.js";
 import Response from "../utils/response_template.js";
@@ -32,9 +33,17 @@ const listingController = {
 			res.status(err.status || 500).json(new Response(err).fail());
 		}
 	},
-	getLikeListing: async (req, res) => {
+	getUserLikeListing: async (req, res) => {
 		try {
-			const data = await dbGetLikeListing(req);
+			const data = await dbGetUserLikeListing(req);
+			res.status(200).json(new Response(data).success());
+		} catch (err) {
+			res.status(err.status || 500).json(new Response(err).fail());
+		}
+	},
+	getListingLikeCount: async (req, res) => {
+		try {
+			const data = await dbGetListingLikeCount(req);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
 			res.status(err.status || 500).json(new Response(err).fail());

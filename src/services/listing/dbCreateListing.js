@@ -62,6 +62,7 @@ export default async function dbCreateListing(req) {
 		const result = await sequelize.transaction(async (t) => {
 			const prod = await products.create(
 				{
+					seller_name,
 					name: item_name,
 					prod_cat_ref_start: subCategory_id,
 					stock: 1,

@@ -5,6 +5,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import listingRoutes from "./routes/listingRouter.js";
+import userRoutes from "./routes/userRouter.js";
 
 import errorHandler from "./middleware/errorhandler.js";
 
@@ -26,6 +27,7 @@ app.use(cors(cors_option));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/listing", listingRoutes);
+app.use("/user", userRoutes);
 app.use(helmet());
 app.use(errorHandler);
 

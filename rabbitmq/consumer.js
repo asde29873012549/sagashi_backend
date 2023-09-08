@@ -20,13 +20,13 @@ async function mq_consumer() {
 			async (message) => {
 				const res = JSON.parse(message.content.toString());
 				if (res) {
-					const { prod_id, sub_category, ...rest_data } = res.data;
+					const { prod_id, sub_category, id, ...rest_data } = res.data;
 
 					const create_doc = await es_client.index({
 						index: product_index,
 						id: prod_id,
 						document: {
-							id: prod_id,
+							prod_id,
 							subCategory: sub_category,
 							...rest_data,
 						},
