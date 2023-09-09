@@ -109,6 +109,26 @@ const applyAssociations = (sequelize) => {
 		foreignKey: "product_id",
 		otherKey: "user_name",
 	});
+	Users.hasMany(Likes, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Products.hasMany(Likes, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	Likes.belongsTo(Users, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Likes.belongsTo(Products, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
 
 	// Users < Messages One-To-Many
 	Users.hasMany(Messages, {
@@ -163,6 +183,26 @@ const applyAssociations = (sequelize) => {
 		foreignKey: "product_id",
 		otherKey: "user_name",
 	});
+	Users.hasMany(Offers, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Products.hasMany(Offers, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	Offers.belongsTo(Users, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Offers.belongsTo(Products, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
 
 	// Categories < Products One-To-Many
 	Categories.hasMany(Products, {
@@ -207,6 +247,26 @@ const applyAssociations = (sequelize) => {
 		foreignKey: "product_id",
 		otherKey: "user_name",
 	});
+	Users.hasMany(RecentlyViewed, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Products.hasMany(RecentlyViewed, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	RecentlyViewed.belongsTo(Users, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	RecentlyViewed.belongsTo(Products, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
 
 	// Users <> Products Many-To-Many through ShoppingCart
 	Users.belongsToMany(Products, {
@@ -222,6 +282,26 @@ const applyAssociations = (sequelize) => {
 		},
 		foreignKey: "product_id",
 		otherKey: "user_name",
+	});
+	Users.hasMany(ShoppingCart, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Products.hasMany(ShoppingCart, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	ShoppingCart.belongsTo(Users, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	ShoppingCart.belongsTo(Products, {
+		foreignKey: {
+			name: "product_id",
+		},
 	});
 
 	// Users < Address One-To-Many

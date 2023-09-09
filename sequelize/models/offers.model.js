@@ -4,13 +4,9 @@ const Offers = (sequelize) =>
 	sequelize.define(
 		"Offers",
 		{
-			id: {
-				type: DataTypes.INTEGER,
-				autoIncrement: true,
-				primaryKey: true,
-			},
 			user_name: {
 				type: DataTypes.STRING(80),
+				primaryKey: true,
 				references: {
 					model: "Users",
 					key: "username",
@@ -18,6 +14,7 @@ const Offers = (sequelize) =>
 			},
 			product_id: {
 				type: DataTypes.INTEGER,
+				primaryKey: true,
 				references: {
 					model: "Products",
 					key: "id",

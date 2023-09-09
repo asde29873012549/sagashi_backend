@@ -1,10 +1,10 @@
 import * as dotenv from "dotenv";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { DatabaseError, NotFoundError } from "../../utils/api_error.js";
+import { DatabaseError, NotFoundError, ForbiddenError } from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbUpdateUser(req) {
+export default async function dbUpdateUser(req, res) {
 	const users = Model.Users;
 
 	const {
@@ -18,6 +18,10 @@ export default async function dbUpdateUser(req) {
 		country,
 		fullname,
 	} = req.body;
+
+	const jwtUsername = res.locals.user;
+
+	if (username !== jwtUsername) throw new ForbiddenError();
 
 	try {
 		const result = await sequelize.transaction(async (t) => {

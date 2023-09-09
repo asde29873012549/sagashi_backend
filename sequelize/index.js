@@ -55,7 +55,6 @@ async function syncDB() {
 /*
 await syncDB();
 
-
 // Create notify function
 await sequelize.query(`
 CREATE OR REPLACE FUNCTION sagashi.notify_trigger() RETURNS trigger AS $trigger$
