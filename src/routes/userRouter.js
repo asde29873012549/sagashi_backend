@@ -7,11 +7,11 @@ const router = express.Router();
 router.post("/login", userController.login);
 router.post("/register", userController.register);
 
-router.get("/:username", userController.getUser);
-router.post("/:username", userController.updateUser);
+router.get("/:username", tokenAuthentication, userController.getUser);
+router.post("/:username", tokenAuthentication, userController.updateUser);
 
-router.get("/:username/shoppingBag", userController.getShopppingBag);
-router.get("/:username/messages", userController.getMessages);
-router.post("/:username/password", userController.updatePassword);
+router.get("/:username/shoppingCart", tokenAuthentication, userController.getShopppingCart);
+router.get("/:username/chatroom", tokenAuthentication, userController.getChatroom);
+router.post("/:username/password", tokenAuthentication, userController.updatePassword);
 
 export default router;

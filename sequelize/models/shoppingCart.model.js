@@ -31,7 +31,7 @@ const ShoppingCart = (sequelize) =>
 			indexes: [
 				{
 					using: "BTREE",
-					fields: ["user_name"],
+					fields: ["user_name", "product_id"],
 				},
 			],
 		},

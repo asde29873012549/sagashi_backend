@@ -1,14 +1,18 @@
 import * as dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { DatabaseError, NotFoundError } from "../../utils/api_error.js";
+import { DatabaseError, NotFoundError, ForbiddenError } from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbUpdatePassword(req) {
+export default async function dbUpdatePassword(req, res) {
 	const users = Model.Users;
 
 	const { username, oldPassword, newPassword } = req.body;
+
+	const jwtUsername = res.locals.user;
+
+	if (username !== jwtUsername) throw new ForbiddenError();
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
