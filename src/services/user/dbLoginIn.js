@@ -1,8 +1,9 @@
 import * as dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
 import { generateAccessToken, generateRefreshToken } from "../../utils/tokenGenerator.js";
-import { DatabaseError, NotFoundError } from "../../utils/api_error.js";
+import { DatabaseError, NotFoundError, UnknownError } from "../../utils/api_error.js";
 
 dotenv.config();
 
@@ -40,7 +41,9 @@ export default async function dbLoginIn(req) {
 	} catch (err) {
 		if (err instanceof NotFoundError) {
 			throw err;
+		} else if (err instanceof SequelizeGenericError) {
+			throw new DatabaseError(err.name);
 		}
-		throw new DatabaseError();
+		throw new UnknownError();
 	}
 }

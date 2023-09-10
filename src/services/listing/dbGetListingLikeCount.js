@@ -1,6 +1,7 @@
 import * as dotenv from "dotenv";
+import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { DatabaseError, ValidationError } from "../../utils/api_error.js";
+import { DatabaseError, ValidationError, UnknownError } from "../../utils/api_error.js";
 
 dotenv.config();
 
@@ -28,13 +29,13 @@ export default async function dbGetListingLikeCount(req) {
 			return count;
 		});
 
-		if (!result) {
-			throw new DatabaseError();
-		} else {
-			return result;
-		}
+		return result;
 	} catch (err) {
-		console.log(err);
-		throw new DatabaseError();
+		if (err instanceof ValidationError) {
+			throw err;
+		} else if (err instanceof SequelizeGenericError) {
+			throw new DatabaseError(err.name);
+		}
+		throw new UnknownError();
 	}
 }
