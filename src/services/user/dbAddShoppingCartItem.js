@@ -1,13 +1,14 @@
 import * as dotenv from "dotenv";
-import { BaseError as SequelizeGenericError, Op } from "sequelize";
+import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
 import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbGetChatroom(req, res) {
-	const chatrooms = Model.Chatrooms;
+export default async function dbAddShoppingCartItem(req, res) {
+	const shoppingCart = Model.ShoppingCart;
 
+	const { product_id } = req.body;
 	const paramsUsername = req.params.username;
 	const jwtUsername = res.locals.user;
 
@@ -15,23 +16,20 @@ export default async function dbGetChatroom(req, res) {
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const allChatrooms = await chatrooms.findAll(
+			const shoppingCartItems = await shoppingCart.create(
 				{
-					where: {
-						[Op.or]: [{ seller_name: jwtUsername }, { buyer_name: jwtUsername }],
-					},
+					user_name: jwtUsername,
+					product_id,
 				},
 				{ transaction: t },
 			);
 
-			return allChatrooms;
+			return shoppingCartItems;
 		});
 
 		return result;
 	} catch (err) {
-		if (err instanceof ForbiddenError) {
-			throw err;
-		} else if (err instanceof SequelizeGenericError) {
+		if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);
 		}
 		throw new UnknownError();

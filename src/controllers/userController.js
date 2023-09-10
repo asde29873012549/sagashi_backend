@@ -4,6 +4,7 @@ import dbUpdatePassword from "../services/user/dbUpdatePassword.js";
 import dbRegister from "../services/user/dbRegister.js";
 import dbLoginIn from "../services/user/dbLoginIn.js";
 import dbGetShoppingCart from "../services/user/dbGetShoppingCart.js";
+import dbAddShoppingCartItem from "../services/user/dbAddShoppingCartItem.js";
 import dbGetChatroom from "../services/user/dbGetChatroom.js";
 import Response from "../utils/response_template.js";
 
@@ -64,6 +65,15 @@ const userController = {
 	getShopppingCart: async (req, res) => {
 		try {
 			const data = await dbGetShoppingCart(req, res);
+			return res.status(200).json(new Response(data).success());
+		} catch (err) {
+			console.log(err);
+			return res.status(err.status || 500).json(new Response(err).fail());
+		}
+	},
+	addShopppingCartItem: async (req, res) => {
+		try {
+			const data = await dbAddShoppingCartItem(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
 			console.log(err);

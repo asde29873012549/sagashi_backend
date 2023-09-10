@@ -11,6 +11,7 @@ router.get("/:username", tokenAuthentication, userController.getUser);
 router.post("/:username", tokenAuthentication, userController.updateUser);
 
 router.get("/:username/shoppingCart", tokenAuthentication, userController.getShopppingCart);
+router.post("/:username/shoppingCart", tokenAuthentication, userController.addShopppingCartItem);
 router.get("/:username/chatroom", tokenAuthentication, userController.getChatroom);
 router.post("/:username/password", tokenAuthentication, userController.updatePassword);
 

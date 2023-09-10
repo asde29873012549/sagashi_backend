@@ -1,6 +1,7 @@
 import * as dotenv from "dotenv";
+import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { DatabaseError, NotFoundError, ForbiddenError } from "../../utils/api_error.js";
+import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_error.js";
 
 dotenv.config();
 
@@ -29,17 +30,16 @@ export default async function dbGetShoppinCart(req, res) {
 				{ transaction: t },
 			);
 
-			if (!shoppingCartItems) throw new NotFoundError();
-
 			return shoppingCartItems;
 		});
 
 		return result;
 	} catch (err) {
-		if (err instanceof NotFoundError) {
+		if (err instanceof ForbiddenError) {
 			throw err;
+		} else if (err instanceof SequelizeGenericError) {
+			throw new DatabaseError(err.name);
 		}
-		console.log(err);
-		throw new DatabaseError();
+		throw new UnknownError();
 	}
 }

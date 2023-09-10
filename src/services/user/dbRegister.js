@@ -1,7 +1,8 @@
 import * as dotenv from "dotenv";
 import bcrypt from "bcrypt";
+import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { DatabaseError, ConflictError } from "../../utils/api_error.js";
+import { DatabaseError, ConflictError, UnknownError } from "../../utils/api_error.js";
 // import passport from "passport";
 // import { Strategy, ExtractJwt } from "passport-jwt";
 /* const opts = {
@@ -43,7 +44,9 @@ export default async function dbRegister(req) {
 	} catch (err) {
 		if (err instanceof ConflictError) {
 			throw err;
+		} else if (err instanceof SequelizeGenericError) {
+			throw new DatabaseError(err.name);
 		}
-		throw new DatabaseError();
+		throw new UnknownError();
 	}
 }

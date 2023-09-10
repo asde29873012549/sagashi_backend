@@ -1,6 +1,12 @@
 import * as dotenv from "dotenv";
+import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { DatabaseError, NotFoundError, ForbiddenError } from "../../utils/api_error.js";
+import {
+	DatabaseError,
+	NotFoundError,
+	UnknownError,
+	ForbiddenError,
+} from "../../utils/api_error.js";
 
 dotenv.config();
 
@@ -27,10 +33,14 @@ export default async function dbGetUser(req, res) {
 			return user;
 		});
 
-		if (!result) throw new NotFoundError();
+		if (!result.username) throw new NotFoundError();
 		return result;
 	} catch (err) {
-		console.log(err);
-		throw new DatabaseError();
+		if (err instanceof ForbiddenError || err instanceof NotFoundError) {
+			throw err;
+		} else if (err instanceof SequelizeGenericError) {
+			throw new DatabaseError(err.name);
+		}
+		throw new UnknownError();
 	}
 }

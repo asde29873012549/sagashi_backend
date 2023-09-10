@@ -104,6 +104,12 @@ class StorageError extends AppError {
 	}
 }
 
+class UnknownError extends AppError {
+	constructor(message = "Unknown error has occurred. Please try again") {
+		super(message, 500);
+	}
+}
+
 export {
 	AppError,
 	BadRequestError,
@@ -120,4 +126,5 @@ export {
 	RateLimitExceededError,
 	RedisError,
 	StorageError,
+	UnknownError,
 };

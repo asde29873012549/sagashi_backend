@@ -7,12 +7,10 @@ const limits = {
 	fileSize: 5 * 1024 * 1024,
 };
 
+const allowMimeType = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
+
 const fileFilter = (_, file, cb) => {
-	if (
-		file.mimetype !== "image/jpg" &&
-		file.mimetype !== "image/jpeg" &&
-		file.mimetype !== "image/png"
-	) {
+	if (!allowMimeType.includes(file.mimetype)) {
 		cb(null, false);
 	}
 	cb(null, true);
