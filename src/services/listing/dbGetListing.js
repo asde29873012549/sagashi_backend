@@ -1,4 +1,9 @@
-import { ServiceUnavailableError, ValidationError } from "../../utils/api_error.js";
+import { errors as EsError } from "@elastic/elasticsearch";
+import {
+	ServiceUnavailableError,
+	ValidationError,
+	ElasticSearchError,
+} from "../../utils/api_error.js";
 import client from "../../../elastic_search/client.js";
 import hits_extractor from "../../utils/elastic_search/hits_extractor.js";
 import filter_query from "../../utils/elastic_search/filter_query.js";
@@ -35,7 +40,9 @@ export default async function dbGetListing(req) {
 			const data = await client.search(es_query);
 			result = hits_extractor(data);
 		} catch (err) {
-			if (err instanceof ValidationError) {
+			if (err instanceof EsError) {
+				throw new ElasticSearchError(err.name);
+			} else if (err instanceof ValidationError) {
 				throw err;
 			} else {
 				throw new ServiceUnavailableError();
@@ -53,7 +60,9 @@ export default async function dbGetListing(req) {
 			const data = await client.search(es_query);
 			result = hits_extractor(data);
 		} catch (err) {
-			if (err instanceof ValidationError) {
+			if (err instanceof EsError) {
+				throw new ElasticSearchError(err.name);
+			} else if (err instanceof ValidationError) {
 				throw err;
 			} else {
 				throw new ServiceUnavailableError();
@@ -64,7 +73,9 @@ export default async function dbGetListing(req) {
 			const data = await client.search(filter_query(query_template, req.query));
 			result = hits_extractor(data);
 		} catch (err) {
-			if (err instanceof ValidationError) {
+			if (err instanceof EsError) {
+				throw new ElasticSearchError(err.name);
+			} else if (err instanceof ValidationError) {
 				throw err;
 			} else {
 				throw new ServiceUnavailableError();

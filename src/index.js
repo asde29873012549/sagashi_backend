@@ -28,6 +28,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/listing", listingRoutes);
 app.use("/user", userRoutes);
+app.use("/message", userRoutes);
+app.use("/notification", userRoutes);
 app.use(helmet());
 app.use(errorHandler);
 

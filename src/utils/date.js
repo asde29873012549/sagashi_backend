@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 function getISODate30DaysAgo() {
 	const currentDate = new Date();
 	const thirtyDaysAgo = new Date(currentDate);
@@ -7,4 +9,10 @@ function getISODate30DaysAgo() {
 	return isoDateString;
 }
 
-export { getISODate30DaysAgo };
+const formatDateTime = (date) => {
+	const parsedDate = DateTime.fromMillis(date, { zone: "utc" });
+	const formattedDate = parsedDate.toISO({ includeOffset: true });
+	return formattedDate;
+};
+
+export { getISODate30DaysAgo, formatDateTime };

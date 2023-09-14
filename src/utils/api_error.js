@@ -100,7 +100,13 @@ class RedisError extends AppError {
 
 class StorageError extends AppError {
 	constructor(message = "Cloud Storage upload failed") {
-		super(message, 500);
+		super(message, 503);
+	}
+}
+
+class ElasticSearchError extends AppError {
+	constructor(message = "Search failed to execute") {
+		super(message, 400);
 	}
 }
 
@@ -124,6 +130,7 @@ export {
 	StockUnavailableError,
 	ServiceUnavailableError,
 	RateLimitExceededError,
+	ElasticSearchError,
 	RedisError,
 	StorageError,
 	UnknownError,

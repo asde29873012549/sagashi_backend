@@ -1,6 +1,12 @@
+import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
 import createFile from "../../utils/gcp/cloudStorage.js";
-import { DatabaseError, StorageError, ValidationError } from "../../utils/api_error.js";
+import {
+	DatabaseError,
+	StorageError,
+	ValidationError,
+	UnknownError,
+} from "../../utils/api_error.js";
 
 export default async function dbSaveListingDraft(req) {
 	const products = Model.Products;
@@ -51,7 +57,7 @@ export default async function dbSaveListingDraft(req) {
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			await products.create(
+			const data = await products.create(
 				{
 					prod_cat_ref_start: subCategory_id || category_id || department_id,
 					seller_name,
@@ -70,16 +76,14 @@ export default async function dbSaveListingDraft(req) {
 				{ transaction: t },
 			);
 
-			return "draft saved successfully";
+			return data;
 		});
 
-		if (!result) {
-			throw new DatabaseError();
-		} else {
-			return result;
-		}
+		return result;
 	} catch (err) {
-		console.log(err);
-		throw new DatabaseError();
+		if (err instanceof SequelizeGenericError) {
+			throw new DatabaseError(err.name);
+		}
+		throw new UnknownError();
 	}
 }
