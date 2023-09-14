@@ -4,6 +4,14 @@ const Chatrooms = (sequelize) =>
 	sequelize.define(
 		"Chatrooms",
 		{
+			id: {
+				type: DataTypes.STRING(255),
+				primaryKey: true,
+				reference: {
+					model: "Messages",
+					key: "id",
+				},
+			},
 			seller_name: {
 				type: DataTypes.STRING(80),
 				references: {

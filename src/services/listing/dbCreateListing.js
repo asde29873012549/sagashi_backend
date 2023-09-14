@@ -1,6 +1,12 @@
+import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
 import createFile from "../../utils/gcp/cloudStorage.js";
-import { DatabaseError, StorageError, ValidationError } from "../../utils/api_error.js";
+import {
+	DatabaseError,
+	StorageError,
+	ValidationError,
+	UnknownError,
+} from "../../utils/api_error.js";
 
 export default async function dbCreateListing(req) {
 	const products = Model.Products;
@@ -81,7 +87,7 @@ export default async function dbCreateListing(req) {
 
 			if (!prod) return null;
 
-			const prod_sync = await products_to_be_sync.create(
+			await products_to_be_sync.create(
 				{
 					prod_id: Number(prod.dataValues.id),
 					seller_name,
@@ -105,16 +111,14 @@ export default async function dbCreateListing(req) {
 				{ transaction: t },
 			);
 
-			return prod_sync;
+			return prod;
 		});
 
-		if (!result) {
-			throw new DatabaseError();
-		} else {
-			return "Listing uploaded sucessfully";
-		}
+		return result;
 	} catch (err) {
-		console.log(err);
-		throw new DatabaseError();
+		if (err instanceof SequelizeGenericError) {
+			throw new DatabaseError(err.name);
+		}
+		throw new UnknownError();
 	}
 }
