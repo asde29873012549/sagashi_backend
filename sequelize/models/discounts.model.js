@@ -9,7 +9,7 @@ const Discounts = (sequelize) =>
 				allowNull: false,
 			},
 			active: {
-				type: DataTypes.SMALLINT,
+				type: DataTypes.STRING(1),
 				defaultValue: 1,
 			},
 		},

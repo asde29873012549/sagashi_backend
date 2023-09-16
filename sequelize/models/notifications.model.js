@@ -22,6 +22,9 @@ const Notifications = (sequelize) =>
 				type: DataTypes.TEXT,
 				allowNull: false,
 			},
+			link: {
+				type: DataTypes.STRING(512)
+			},
 			read_at: {
 				type: DataTypes.DATE,
 			},

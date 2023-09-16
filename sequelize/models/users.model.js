@@ -16,7 +16,7 @@ const Users = (sequelize) =>
 				type: DataTypes.STRING(70),
 			},
 			avatar: {
-				type: DataTypes.STRING,
+				type: DataTypes.STRING(512),
 			},
 			email: {
 				type: DataTypes.STRING(100),
@@ -27,8 +27,15 @@ const Users = (sequelize) =>
 			gender: {
 				type: DataTypes.STRING(10),
 			},
+			language: {
+				type: DataTypes.STRING(50),
+			},
 			country: {
 				type: DataTypes.STRING(100),
+			},
+			subscribe: {
+				type: DataTypes.STRING(1),
+				defaultValue:"0"
 			},
 		},
 		{

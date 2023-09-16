@@ -1,42 +1,40 @@
 import * as dotenv from "dotenv";
 import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import {
-	DatabaseError,
-	NotFoundError,
-	UnknownError,
-	ForbiddenError,
-} from "../../utils/api_error.js";
+import { formatDateTime } from "../../utils/date.js";
+import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbGetUser(req, res) {
-	const users = Model.Users;
+export default async function dbReadNotification(req, res) {
+	const notifications = Model.Notifications;
 
-	const { username } = req.params;
+	const { notificationsRead } = req.body;
 
 	const jwtUsername = res.locals.user;
 
-	if (username !== jwtUsername) throw new ForbiddenError();
+	if (!jwtUsername) throw new ForbiddenError();
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const user = await users.findOne(
+			const message = await notifications.update(
+				{
+					read_at: formatDateTime(Date.now()),
+				},
 				{
 					where: {
-						username,
+						id: notificationsRead,
 					},
 				},
 				{ transaction: t },
 			);
 
-			return user;
+			return message;
 		});
 
-		if (!result.username) throw new NotFoundError();
 		return result;
 	} catch (err) {
-		if (err instanceof ForbiddenError || err instanceof NotFoundError) {
+		if (err instanceof ForbiddenError) {
 			throw err;
 		} else if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);

@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.get("/:chatroom_id", tokenAuthentication, messageController.getMessages);
 router.post("/", tokenAuthentication, messageController.createMessages);
+router.put("/", tokenAuthentication, messageController.readMessages);
 
 export default router;

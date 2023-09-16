@@ -53,7 +53,7 @@ const Products_to_be_sync = (sequelize) =>
 				type: DataTypes.JSONB,
 			},
 			status: {
-				type: DataTypes.SMALLINT,
+				type: DataTypes.STRING(1),
 				allowNull: false,
 				defaultValue: 1,
 			},
