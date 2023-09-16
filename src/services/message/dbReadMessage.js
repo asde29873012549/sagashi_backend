@@ -1,37 +1,35 @@
 import * as dotenv from "dotenv";
-import { BaseError as SequelizeGenericError, Op } from "sequelize";
+import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
+import { formatDateTime } from "../../utils/date.js";
 import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbGetNotification(req, res) {
-	const notification = Model.Notifications;
+export default async function dbReadMessage(req, res) {
+	const messages = Model.Messages;
 
-	const { username, cursor } = req.params;
+	const { messagesRead } = req.body;
 
 	const jwtUsername = res.locals.user;
 
-	if (username !== jwtUsername) throw new ForbiddenError();
-
-	const sqlObj = {
-		where: {
-			receiver_name: username,
-		},
-		order: [["create_date", "desc"]],
-		limit: 10
-	}
-
-	if (cursor) sqlObj.where.id = {[Op.gt]: cursor}
+	if (!jwtUsername) throw new ForbiddenError();
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const notifications = await notification.findAll(
-				sqlObj,
+			const message = await messages.update(
+				{
+					read_at: formatDateTime(Date.now()),
+				},
+				{
+					where: {
+						id: messagesRead,
+					},
+				},
 				{ transaction: t },
 			);
 
-			return notifications;
+			return message;
 		});
 
 		return result;

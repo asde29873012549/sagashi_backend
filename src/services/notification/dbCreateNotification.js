@@ -9,7 +9,7 @@ dotenv.config();
 export default async function dbCreateNotification(req, res) {
 	const notification = Model.Notifications;
 
-	const { sender_name, receiver_name, message, isRead } = req.body;
+	const { sender_name, receiver_name, message, link, isRead } = req.body;
 
 	const jwtUsername = res.locals.user;
 
@@ -22,6 +22,7 @@ export default async function dbCreateNotification(req, res) {
 					sender_name,
 					receiver_name,
 					message,
+					link,
 					read_at: isRead ? formatDateTime(Date.now()) : null,
 				},
 				{ transaction: t },

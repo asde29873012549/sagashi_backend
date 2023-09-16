@@ -4,26 +4,16 @@ import sequelize, { Model } from "../../../sequelize/index.js";
 import {
 	DatabaseError,
 	NotFoundError,
-	ForbiddenError,
 	UnknownError,
+	ForbiddenError,
 } from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbUpdateUser(req, res) {
-	const users = Model.Users;
+export default async function dbFollowUser(req, res) {
+	const follows = Model.Follows;
 
-	const {
-		username,
-		avatar,
-		email,
-		birth_date,
-		gender,
-		shipping_address,
-		language,
-		country,
-		fullname,
-	} = req.body;
+	const { username, follow_user } = req.body;
 
 	const jwtUsername = res.locals.user;
 
@@ -31,22 +21,10 @@ export default async function dbUpdateUser(req, res) {
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const user = await users.update(
+			const user = await follows.create(
 				{
-					username,
-					avatar,
-					email,
-					birth_date,
-					gender,
-					shipping_address,
-					language,
-					country,
-					fullname,
-				},
-				{
-					where: {
-						username,
-					},
+					user_name:follow_user,
+					follower_name:username
 				},
 				{ transaction: t },
 			);
@@ -54,10 +32,9 @@ export default async function dbUpdateUser(req, res) {
 			return user;
 		});
 
-		if (!result) throw new NotFoundError();
 		return result;
 	} catch (err) {
-		if (err instanceof NotFoundError || err instanceof ForbiddenError) {
+		if (err instanceof ForbiddenError || err instanceof NotFoundError) {
 			throw err;
 		} else if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);

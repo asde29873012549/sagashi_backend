@@ -4,9 +4,11 @@ const applyAssociations = (sequelize) => {
 	const {
 		Categories,
 		Chatrooms,
+		Curations,
 		Designers,
 		Discounts,
 		FeaturedDesigners,
+		FollowedDesigners,
 		Follows,
 		Likes,
 		Messages,
@@ -35,6 +37,10 @@ const applyAssociations = (sequelize) => {
 	// Categories < Sizes => One-To-Many
 	Categories.hasMany(Sizes);
 	Sizes.belongsTo(Categories);
+
+	// Curations < Products => One-To-Many
+	Curations.hasMany(Products);
+	Products.belongsTo(Curations);
 
 	// Users < Chatrooms => One-To-Many
 	Users.hasMany(Chatrooms, {
@@ -265,6 +271,42 @@ const applyAssociations = (sequelize) => {
 	RecentlyViewed.belongsTo(Products, {
 		foreignKey: {
 			name: "product_id",
+		},
+	});
+
+	// Users <> Designers Many-To-Many through FollowedDesigners
+	Users.belongsToMany(Designers, {
+		through: {
+			model: FollowedDesigners,
+		},
+		foreignKey: "user_name",
+		otherKey: "designer_id",
+	});
+	Designers.belongsToMany(Users, {
+		through: {
+			model: FollowedDesigners,
+		},
+		foreignKey: "designer_id",
+		otherKey: "user_name",
+	});
+	Users.hasMany(FollowedDesigners, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Designers.hasMany(FollowedDesigners, {
+		foreignKey: {
+			name: "designer_id",
+		},
+	});
+	FollowedDesigners.belongsTo(Users, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	FollowedDesigners.belongsTo(Designers, {
+		foreignKey: {
+			name: "designer_id",
 		},
 	});
 

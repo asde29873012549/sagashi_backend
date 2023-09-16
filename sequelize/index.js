@@ -2,10 +2,12 @@ import sequelize from "../config/db.js";
 import associations from "./associations.js";
 
 import categories from "./models/categories.model.js";
+import curations from "./models/curations.model.js";
 import chatrooms from "./models/chatrooms.model.js";
 import designers from "./models/designers.model.js";
 import discounts from "./models/discounts.model.js";
 import featuredDesigners from "./models/featuredDesigners.model.js";
+import followedDesigners from "./models/followedDesigners.model.js";
 import follows from "./models/follows.model.js";
 import likes from "./models/likes.model.js";
 import messages from "./models/messages.model.js";
@@ -17,6 +19,8 @@ import shoppingCart from "./models/shoppingCart.model.js";
 import sizes from "./models/sizes.model.js";
 import userAddress from "./models/userAddress.model.js";
 import users from "./models/users.model.js";
+import info from "./models/info.model.js";
+import faqs from "./models/faqs.model.js";
 import products_to_be_sync from "./models/products_to_be_sync.model.js";
 
 const pg_channel = process.env.PG_NOTIFY_CHANNEL;
@@ -28,9 +32,13 @@ const modelDefiners = [
 	sizes,
 	userAddress,
 	categories,
+	curations,
+	faqs,
+	info,
 	chatrooms,
 	discounts,
 	featuredDesigners,
+	followedDesigners,
 	follows,
 	likes,
 	messages,

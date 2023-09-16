@@ -32,7 +32,7 @@ const Products = (sequelize) =>
 				type: DataTypes.JSONB,
 			},
 			status: {
-				type: DataTypes.SMALLINT,
+				type: DataTypes.STRING(1),
 				defaultValue: 1,
 			},
 			color_id: {
@@ -69,6 +69,13 @@ const Products = (sequelize) =>
 				type: DataTypes.INTEGER,
 				references: {
 					model: "Discounts",
+					key: "id",
+				},
+			},
+			curation_id: {
+				type: DataTypes.INTEGER,
+				references: {
+					model: "Curations",
 					key: "id",
 				},
 			},

@@ -1,5 +1,6 @@
 import dbGetMessage from "../services/message/dbGetMessage.js";
 import dbCreateMessage from "../services/message/dbCreateMessage.js";
+import dbReadMessage from "../services/message/dbReadMessage.js";
 import Response from "../utils/response_template.js";
 
 const userController = {
@@ -15,6 +16,15 @@ const userController = {
 	createMessages: async (req, res) => {
 		try {
 			const data = await dbCreateMessage(req, res);
+			return res.status(200).json(new Response(data).success());
+		} catch (err) {
+			console.log(err);
+			return res.status(err.status || 500).json(new Response(err).fail());
+		}
+	},
+	readMessages: async (req, res) => {
+		try {
+			const data = await dbReadMessage(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
 			console.log(err);

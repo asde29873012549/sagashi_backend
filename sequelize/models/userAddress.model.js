@@ -21,7 +21,7 @@ const userAddress = (sequelize) =>
 				type: DataTypes.STRING(70),
 			},
 			postal_code: {
-				type: DataTypes.STRING(50),
+				type: DataTypes.STRING(10),
 			},
 		},
 		{

@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 
-const Follows = (sequelize) =>
+const FollowedDesigners = (sequelize) =>
 	sequelize.define(
-		"Follows",
+		"FollowedDesigners",
 		{
 			user_name: {
 				type: DataTypes.STRING(80),
@@ -11,11 +11,11 @@ const Follows = (sequelize) =>
 					key: "username",
 				},
 			},
-			follower_name: {
-				type: DataTypes.STRING(80),
+			designer_id: {
+				type: DataTypes.INTEGER,
 				references: {
-					model: "Users",
-					key: "username",
+					model: "Designers",
+					key: "id",
 				},
 			},
 		},
@@ -25,14 +25,8 @@ const Follows = (sequelize) =>
 			schema: "sagashi",
 			freezeTableName: true,
 			timestamps: true,
-			updatedAt: false,
-			indexes: [
-				{
-					using: "BTREE",
-					fields: ["user_name", "follower_name"],
-				},
-			],
+			updatedAt: false
 		},
 	);
 
-export default Follows;
+export default FollowedDesigners;
