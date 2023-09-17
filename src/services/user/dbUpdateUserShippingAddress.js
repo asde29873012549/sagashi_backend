@@ -23,11 +23,11 @@ export default async function dbUpdateUserShippingAddress(req, res) {
 		const result = await sequelize.transaction(async (t) => {
 			const address_result = await addresses.update(
 				{
-					user_name:username,
+					user_name: username,
 					address,
 					city,
 					country,
-					postal_code
+					postal_code,
 				},
 				{
 					where: {

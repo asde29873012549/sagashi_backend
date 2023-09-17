@@ -11,8 +11,11 @@ import validator from "../../utils/elastic_search/validator.js";
 
 export default async function dbGetListing(req) {
 	let result;
+
+	const { limit, ...restQuery } = req.query;
+
 	const query_template = {
-		size: 3,
+		size: limit || 3,
 		query: {},
 		sort: [{ updated_at: "desc" }],
 	};
@@ -26,29 +29,16 @@ export default async function dbGetListing(req) {
 		"newArrivals",
 		"price_ceil",
 		"price_ground",
+		"size",
+		"limit",
+		"recentlyViewed",
 		"cursor",
 	];
 
 	// check for invalid query param
 	const validated = validator(support_queries, req);
 
-	if (validated.length > 0 && validated.includes("id")) {
-		const es_query = query_template;
-		es_query.query.term = { id: Number(req.params.id) };
-		try {
-			// get one listing from elastic search with id
-			const data = await client.search(es_query);
-			result = hits_extractor(data);
-		} catch (err) {
-			if (err instanceof EsError) {
-				throw new ElasticSearchError(err.name);
-			} else if (err instanceof ValidationError) {
-				throw err;
-			} else {
-				throw new ServiceUnavailableError();
-			}
-		}
-	} else if (validated.length === 0 || (validated.includes("cursor") && validated.length === 1)) {
+	if (validated.length === 0 || (validated.includes("cursor") && validated.length === 1)) {
 		// if no filter specified or cursor is the only filter
 		// get all listing
 		const es_query = query_template;
@@ -70,7 +60,7 @@ export default async function dbGetListing(req) {
 		}
 	} else {
 		try {
-			const data = await client.search(filter_query(query_template, req.query));
+			const data = await client.search(filter_query(query_template, restQuery));
 			result = hits_extractor(data);
 		} catch (err) {
 			if (err instanceof EsError) {

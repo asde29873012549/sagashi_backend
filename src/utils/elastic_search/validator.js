@@ -1,11 +1,7 @@
 import { ValidationError } from "../api_error.js";
 
 const validator = (valid_query, req) => {
-	const req_params = Object.keys(req.params);
 	const req_queries = Object.keys(req.query);
-
-	// check for id param
-	if (req_params.length > 0 && !req_params.includes("id")) throw new ValidationError();
 
 	// check for invalid query parameters
 	req_queries.forEach((query) => {
@@ -34,7 +30,7 @@ const validator = (valid_query, req) => {
 			throw new ValidationError();
 	}
 
-	return req_params.length > 0 ? req_params : req_queries;
+	return req_queries;
 };
 
 export default validator;

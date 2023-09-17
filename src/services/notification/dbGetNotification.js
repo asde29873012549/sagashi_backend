@@ -19,17 +19,14 @@ export default async function dbGetNotification(req, res) {
 			receiver_name: username,
 		},
 		order: [["create_date", "desc"]],
-		limit: 10
-	}
+		limit: 10,
+	};
 
-	if (cursor) sqlObj.where.id = {[Op.gt]: cursor}
+	if (cursor) sqlObj.where.id = { [Op.gt]: cursor };
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const notifications = await notification.findAll(
-				sqlObj,
-				{ transaction: t },
-			);
+			const notifications = await notification.findAll(sqlObj, { transaction: t });
 
 			return notifications;
 		});

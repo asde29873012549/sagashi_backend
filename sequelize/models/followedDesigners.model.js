@@ -25,7 +25,7 @@ const FollowedDesigners = (sequelize) =>
 			schema: "sagashi",
 			freezeTableName: true,
 			timestamps: true,
-			updatedAt: false
+			updatedAt: false,
 		},
 	);
 

@@ -1,5 +1,6 @@
 import dbCreateListing from "../services/listing/dbCreateListing.js";
-import dbGetListing from "../services/listing/dbGetListing.js";
+import dbGetAllListing from "../services/listing/dbGetAllListing.js";
+import dbGetSingleListing from "../services/listing/dbGetSingleListing.js";
 import dbLikeListing from "../services/listing/dbLikeListing.js";
 import dbGetUserLikeListing from "../services/listing/dbGetUserLikeListing.js";
 import dbGetListingLikeCount from "../services/listing/dbGetListingLikeCount.js";
@@ -8,61 +9,68 @@ import dbGetListingDraft from "../services/listing/dbGetListingDraft.js";
 import Response from "../utils/response_template.js";
 
 const listingController = {
-	createListing: async (req, res) => {
+	createListing: async (req, res, next) => {
 		try {
-			const data = await dbCreateListing(req);
+			const data = await dbCreateListing(req, res);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			res.status(err.status || 500).json(new Response(err).fail());
+			next(err);
 		}
 	},
-	getListing: async (req, res) => {
+	getAllListing: async (req, res, next) => {
 		try {
-			const data = await dbGetListing(req);
+			const data = await dbGetAllListing(req);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
-			res.status(err.status || 500).json(new Response(err).fail());
+			next(err);
 		}
 	},
-	likeListing: async (req, res) => {
+	getSingleListing: async (req, res, next) => {
 		try {
-			const data = await dbLikeListing(req);
+			const data = await dbGetSingleListing(req);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
-			res.status(err.status || 500).json(new Response(err).fail());
+			next(err);
 		}
 	},
-	getUserLikeListing: async (req, res) => {
+	likeListing: async (req, res, next) => {
 		try {
-			const data = await dbGetUserLikeListing(req);
+			const data = await dbLikeListing(req, res);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
-			res.status(err.status || 500).json(new Response(err).fail());
+			next(err);
 		}
 	},
-	getListingLikeCount: async (req, res) => {
+	getUserLikeListing: async (req, res, next) => {
 		try {
-			const data = await dbGetListingLikeCount(req);
+			const data = await dbGetUserLikeListing(req, res);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
-			res.status(err.status || 500).json(new Response(err).fail());
+			next(err);
 		}
 	},
-	saveListingDraft: async (req, res) => {
+	getListingLikeCount: async (req, res, next) => {
 		try {
-			const data = await dbSaveListingDraft(req);
+			const data = await dbGetListingLikeCount(req, res);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
-			res.status(err.status || 500).json(new Response(err).fail());
+			next(err);
 		}
 	},
-	getListingDraft: async (req, res) => {
+	saveListingDraft: async (req, res, next) => {
 		try {
-			const data = await dbGetListingDraft(req);
+			const data = await dbSaveListingDraft(req, res);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
-			res.status(err.status || 500).json(new Response(err).fail());
+			next(err);
+		}
+	},
+	getListingDraft: async (req, res, next) => {
+		try {
+			const data = await dbGetListingDraft(req, res);
+			res.status(200).json(new Response(data).success());
+		} catch (err) {
+			next(err);
 		}
 	},
 };

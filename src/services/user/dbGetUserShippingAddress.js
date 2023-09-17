@@ -24,7 +24,7 @@ export default async function dbGetUserShippingAddress(req, res) {
 			const addresses = await address.findAll(
 				{
 					where: {
-						user_name:username,
+						user_name: username,
 					},
 				},
 				{ transaction: t },

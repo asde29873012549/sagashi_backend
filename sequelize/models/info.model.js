@@ -21,7 +21,7 @@ const Info = (sequelize) =>
 			},
 			privacyPolicy: {
 				type: DataTypes.TEXT,
-			}
+			},
 		},
 		{
 			sequelize,

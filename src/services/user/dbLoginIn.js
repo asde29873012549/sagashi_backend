@@ -23,6 +23,8 @@ export default async function dbLoginIn(req) {
 				{ transaction: t },
 			);
 
+			if (!user) throw new NotFoundError();
+
 			const isMatch = await bcrypt.compare(password, user.password);
 
 			if (!isMatch) throw new NotFoundError();

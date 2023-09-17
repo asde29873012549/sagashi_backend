@@ -24,7 +24,7 @@ export default async function dbGetUserFollwer(req, res) {
 			const user = await follows.count(
 				{
 					where: {
-						user_name:username,
+						user_name: username,
 					},
 				},
 				{ transaction: t },

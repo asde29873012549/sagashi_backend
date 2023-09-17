@@ -9,9 +9,8 @@ function getISODate30DaysAgo() {
 	return isoDateString;
 }
 
-const formatDateTime = (date) => {
-	const parsedDate = DateTime.fromMillis(date, { zone: "utc" });
-	const formattedDate = parsedDate.toISO({ includeOffset: true });
+const formatDateTime = () => {
+	const formattedDate = DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss");
 	return formattedDate;
 };
 
