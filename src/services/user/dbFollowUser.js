@@ -23,8 +23,8 @@ export default async function dbFollowUser(req, res) {
 		const result = await sequelize.transaction(async (t) => {
 			const user = await follows.create(
 				{
-					user_name:follow_user,
-					follower_name:username
+					user_name: follow_user,
+					follower_name: username,
 				},
 				{ transaction: t },
 			);

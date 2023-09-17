@@ -23,7 +23,7 @@ export default async function dbCreateNotification(req, res) {
 					receiver_name,
 					message,
 					link,
-					read_at: isRead ? formatDateTime(Date.now()) : null,
+					read_at: isRead ? formatDateTime() : null,
 				},
 				{ transaction: t },
 			);

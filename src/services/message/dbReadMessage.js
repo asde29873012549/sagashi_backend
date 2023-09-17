@@ -19,11 +19,11 @@ export default async function dbReadMessage(req, res) {
 		const result = await sequelize.transaction(async (t) => {
 			const message = await messages.update(
 				{
-					read_at: formatDateTime(Date.now()),
+					read_at: formatDateTime(),
 				},
 				{
 					where: {
-						id: messagesRead,
+						id: [...messagesRead],
 					},
 				},
 				{ transaction: t },

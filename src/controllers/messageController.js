@@ -4,31 +4,28 @@ import dbReadMessage from "../services/message/dbReadMessage.js";
 import Response from "../utils/response_template.js";
 
 const userController = {
-	getMessages: async (req, res) => {
+	getMessages: async (req, res, next) => {
 		try {
 			const data = await dbGetMessage(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	createMessages: async (req, res) => {
+	createMessages: async (req, res, next) => {
 		try {
 			const data = await dbCreateMessage(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	readMessages: async (req, res) => {
+	readMessages: async (req, res, next) => {
 		try {
 			const data = await dbReadMessage(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
 };

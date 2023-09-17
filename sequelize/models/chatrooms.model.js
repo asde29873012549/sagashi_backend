@@ -43,7 +43,7 @@ const Chatrooms = (sequelize) =>
 			schema: "sagashi",
 			freezeTableName: true,
 			timestamps: true,
-			updatedAt: false,
+			updatedAt: true,
 			indexes: [
 				{
 					using: "BTREE",

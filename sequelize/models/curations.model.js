@@ -13,8 +13,8 @@ const Curations = (sequelize) =>
 				allowNull: false,
 			},
 			image: {
-				type: DataTypes.STRING(512)
-			}
+				type: DataTypes.STRING(512),
+			},
 		},
 		{
 			sequelize,

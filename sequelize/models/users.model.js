@@ -35,7 +35,7 @@ const Users = (sequelize) =>
 			},
 			subscribe: {
 				type: DataTypes.STRING(1),
-				defaultValue:"0"
+				defaultValue: "0",
 			},
 		},
 		{

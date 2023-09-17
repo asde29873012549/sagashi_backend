@@ -23,11 +23,11 @@ export default async function dbCreateUserShippingAddress(req, res) {
 		const result = await sequelize.transaction(async (t) => {
 			const address_result = await addresses.create(
 				{
-					user_name:username,
+					user_name: username,
 					address,
 					city,
 					country,
-					postal_code
+					postal_code,
 				},
 				{ transaction: t },
 			);

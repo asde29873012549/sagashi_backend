@@ -6,6 +6,8 @@ import cors from "cors";
 import helmet from "helmet";
 import listingRoutes from "./routes/listingRouter.js";
 import userRoutes from "./routes/userRouter.js";
+import messageRoutes from "./routes/messageRouter.js";
+import notificationRoutes from "./routes/notificationRouter.js";
 
 import errorHandler from "./middleware/errorhandler.js";
 
@@ -28,8 +30,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/listing", listingRoutes);
 app.use("/user", userRoutes);
-app.use("/message", userRoutes);
-app.use("/notification", userRoutes);
+app.use("/message", messageRoutes);
+app.use("/notification", notificationRoutes);
 app.use(helmet());
 app.use(errorHandler);
 

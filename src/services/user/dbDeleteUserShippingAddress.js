@@ -24,10 +24,7 @@ export default async function dbDeleteUserShippingAddress(req, res) {
 			const addresses = await address.destroy(
 				{
 					where: {
-						[Op.and]: [
-							{ user_name:username },
-							{ id }
-						]
+						[Op.and]: [{ user_name: username }, { id }],
 					},
 				},
 				{ transaction: t },

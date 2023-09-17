@@ -23,7 +23,7 @@ export default async function dbSubscribe(req, res) {
 		const result = await sequelize.transaction(async (t) => {
 			const user = await users.update(
 				{
-					subscribe:"1"
+					subscribe: "1",
 				},
 				{
 					where: {
@@ -36,7 +36,7 @@ export default async function dbSubscribe(req, res) {
 			return user;
 		});
 
-		if (!result) throw new NotFoundError()
+		if (!result) throw new NotFoundError();
 
 		return result;
 	} catch (err) {

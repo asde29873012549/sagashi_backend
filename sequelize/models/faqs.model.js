@@ -11,7 +11,7 @@ const FAQs = (sequelize) =>
 			answer: {
 				type: DataTypes.TEXT,
 				allowNull: false,
-			}
+			},
 		},
 		{
 			sequelize,

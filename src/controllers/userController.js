@@ -9,7 +9,7 @@ import dbGetUserListing from "../services/user/dbGetUserListing.js";
 import dbGetUserShippingAddress from "../services/user/dbGetUserShippingAddress.js";
 import dbUpdateUserShippingAddress from "../services/user/dbUpdateUserShippingAddress.js";
 import dbCreateUserShippingAddress from "../services/user/dbCreateUserShippingAddress.js";
-import dbDeleteUserShippingAddress from "../services/user/dbDeleteUserShippingAddress.js"
+import dbDeleteUserShippingAddress from "../services/user/dbDeleteUserShippingAddress.js";
 import dbGetUserFollwer from "../services/user/dbGetUserFollwer.js";
 import dbFollowUser from "../services/user/dbFollowUser.js";
 import dbSubscribe from "../services/user/dbSubscribe.js";
@@ -17,47 +17,44 @@ import dbGetChatroom from "../services/user/dbGetChatroom.js";
 import Response from "../utils/response_template.js";
 
 const userController = {
-	getUserInfo: async (req, res) => {
+	getUserInfo: async (req, res, next) => {
 		try {
 			const data = await dbGetUserInfo(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	updateUserInfo: async (req, res) => {
+	updateUserInfo: async (req, res, next) => {
 		try {
 			const data = await dbUpdateUserInfo(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	updatePassword: async (req, res) => {
+	updatePassword: async (req, res, next) => {
 		try {
 			const data = await dbUpdatePassword(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	login: async (req, res) => {
+	login: async (req, res, next) => {
 		try {
 			const data = await dbLoginIn(req);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			if (err.status === 404 && err.message === "Resource Already Exist") {
+			if (err.status === 404 && err.message === "Resource Not Found") {
 				return res
 					.status(err.status)
 					.json(new Response({ message: "This Account does not exists. Please Register" }).fail());
 			}
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	register: async (req, res) => {
+	register: async (req, res, next) => {
 		try {
 			await dbRegister(req);
 			return res.status(200).json(new Response("Success").success());
@@ -67,108 +64,97 @@ const userController = {
 					.status(err.status)
 					.json(new Response({ message: "This Account already exists. Please Log in" }).fail());
 			}
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	getShopppingCart: async (req, res) => {
+	getShopppingCart: async (req, res, next) => {
 		try {
 			const data = await dbGetShoppingCart(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	addShopppingCartItem: async (req, res) => {
+	addShopppingCartItem: async (req, res, next) => {
 		try {
 			const data = await dbAddShoppingCartItem(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	getChatroom: async (req, res) => {
+	getChatroom: async (req, res, next) => {
 		try {
 			const data = await dbGetChatroom(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	getUserListing: async (req, res) => {
+	getUserListing: async (req, res, next) => {
 		try {
 			const data = await dbGetUserListing(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	getUserShippingAddress: async (req, res) => {
+	getUserShippingAddress: async (req, res, next) => {
 		try {
 			const data = await dbGetUserShippingAddress(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	createUserShippingAddress: async (req, res) => {
+	createUserShippingAddress: async (req, res, next) => {
 		try {
 			const data = await dbCreateUserShippingAddress(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	updateUserShippingAddress: async (req, res) => {
+	updateUserShippingAddress: async (req, res, next) => {
 		try {
 			const data = await dbUpdateUserShippingAddress(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	deleteUserShippingAddress: async (req, res) => {
+	deleteUserShippingAddress: async (req, res, next) => {
 		try {
 			const data = await dbDeleteUserShippingAddress(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	getUserFollwer: async (req, res) => {
+	getUserFollwer: async (req, res, next) => {
 		try {
 			const data = await dbGetUserFollwer(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	followUser: async (req, res) => {
+	followUser: async (req, res, next) => {
 		try {
 			const data = await dbFollowUser(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
 	},
-	subscribe: async (req, res) => {
+	subscribe: async (req, res, next) => {
 		try {
 			const data = await dbSubscribe(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
-			console.log(err);
-			return res.status(err.status || 500).json(new Response(err).fail());
+			return next(err);
 		}
-	}
+	},
 };
 
 export default userController;

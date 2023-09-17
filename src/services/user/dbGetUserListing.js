@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-import { BaseError as SequelizeGenericError } from "sequelize";
+import { BaseError as SequelizeGenericError, Op } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
 import {
 	DatabaseError,
@@ -15,6 +15,8 @@ export default async function dbGetUserListing(req, res) {
 
 	const { username } = req.params;
 
+	const { cursor } = req.query;
+
 	const jwtUsername = res.locals.user;
 
 	if (username !== jwtUsername) throw new ForbiddenError();
@@ -24,8 +26,17 @@ export default async function dbGetUserListing(req, res) {
 			const user = await products.findAll(
 				{
 					where: {
-						seller_name:username,
+						[Op.and]: [
+							{
+								id: {
+									[Op.gt]: cursor || 0,
+								},
+							},
+							{ seller_name: username },
+						],
 					},
+					limit: 20,
+					order: [["id", "DESC"]],
 				},
 				{ transaction: t },
 			);
@@ -35,6 +46,7 @@ export default async function dbGetUserListing(req, res) {
 
 		return result;
 	} catch (err) {
+		console.log(err);
 		if (err instanceof ForbiddenError || err instanceof NotFoundError) {
 			throw err;
 		} else if (err instanceof SequelizeGenericError) {

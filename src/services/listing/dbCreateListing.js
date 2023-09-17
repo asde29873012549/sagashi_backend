@@ -6,11 +6,11 @@ import {
 	StorageError,
 	ValidationError,
 	UnknownError,
+	ForbiddenError,
 } from "../../utils/api_error.js";
+import { formatDateTime } from "../../utils/date.js";
 
-export default async function dbCreateListing(req) {
-	const products = Model.Products;
-	const products_to_be_sync = Model.Products_to_be_sync;
+export default async function dbCreateListing(req, res) {
 	const img = req.files;
 	const {
 		department,
@@ -29,11 +29,16 @@ export default async function dbCreateListing(req) {
 		condition_id,
 		price,
 	} = req.body;
+
+	const jwtUsername = res.locals.user;
+	if (seller_name !== jwtUsername) throw new ForbiddenError();
+
 	const rest_of_image = {};
 	let fileUriArray;
 
 	const { desc, tags, ...rest_body } = req.body;
 
+	// check for all required fields except desc & tags
 	Object.values(rest_body).forEach((field) => {
 		if (!field || field === " ") {
 			throw new ValidationError();
@@ -41,7 +46,9 @@ export default async function dbCreateListing(req) {
 	});
 
 	try {
+		console.log(formatDateTime());
 		fileUriArray = await Promise.all(img.map((image) => createFile(image.buffer)));
+		console.log(formatDateTime());
 		if (fileUriArray.length > 1) {
 			fileUriArray.slice(1).forEach((file, index) => {
 				rest_of_image[`image_${index}`] = file;
@@ -63,6 +70,9 @@ export default async function dbCreateListing(req) {
 	const primary_image = fileUriArray[0];
 	const secondary_image =
 		Object.keys(rest_of_image).length > 0 ? JSON.stringify(rest_of_image) : null;
+
+	const products = Model.Products;
+	const products_to_be_sync = Model.Products_to_be_sync;
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
@@ -101,7 +111,7 @@ export default async function dbCreateListing(req) {
 					desc,
 					primary_image,
 					secondary_image,
-					status: 1,
+					status: "1",
 					color,
 					discount: 0,
 					condition,

@@ -30,9 +30,9 @@ export default async function dbGetUserInfo(req, res) {
 				{ transaction: t },
 			);
 
-			delete user.dataValues.password
+			delete user.dataValues.password;
 
-			return user
+			return user;
 		});
 
 		if (!result.username) throw new NotFoundError();

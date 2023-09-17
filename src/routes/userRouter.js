@@ -12,13 +12,29 @@ router.post("/:username/info", tokenAuthentication, userController.updateUserInf
 
 router.get("/:username/listing", tokenAuthentication, userController.getUserListing);
 
-router.get("/:username/shippingAddress", tokenAuthentication, userController.getUserShippingAddress);
-router.put("/:username/shippingAddress", tokenAuthentication, userController.updateUserShippingAddress);
-router.post("/:username/shippingAddress", tokenAuthentication, userController.createUserShippingAddress);
-router.delete("/:username/shippingAddress/:id", tokenAuthentication, userController.deleteUserShippingAddress);
+router.get(
+	"/:username/shippingAddress",
+	tokenAuthentication,
+	userController.getUserShippingAddress,
+);
+router.put(
+	"/:username/shippingAddress",
+	tokenAuthentication,
+	userController.updateUserShippingAddress,
+);
+router.post(
+	"/:username/shippingAddress",
+	tokenAuthentication,
+	userController.createUserShippingAddress,
+);
+router.delete(
+	"/:username/shippingAddress/:id",
+	tokenAuthentication,
+	userController.deleteUserShippingAddress,
+);
 
-router.get("/:username/follow", tokenAuthentication, userController.getUserFollwer)
-router.post("/follow", tokenAuthentication, userController.followUser)
+router.get("/:username/follow", tokenAuthentication, userController.getUserFollwer);
+router.post("/follow", tokenAuthentication, userController.followUser);
 
 router.get("/:username/shoppingCart", tokenAuthentication, userController.getShopppingCart);
 router.post("/:username/shoppingCart", tokenAuthentication, userController.addShopppingCartItem);
