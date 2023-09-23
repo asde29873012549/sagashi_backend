@@ -6,9 +6,10 @@ import {
 	StorageError,
 	ValidationError,
 	UnknownError,
+	ForbiddenError,
 } from "../../utils/api_error.js";
 
-export default async function dbSaveListingDraft(req) {
+export default async function dbSaveListingDraft(req, res) {
 	const products = Model.Products;
 	const img = req.files;
 
@@ -26,6 +27,11 @@ export default async function dbSaveListingDraft(req) {
 		desc,
 		tags,
 	} = req.body;
+
+	const jwtUsername = res.locals.user;
+
+	if (seller_name !== jwtUsername) throw new ForbiddenError();
+
 	const rest_of_image = {};
 	let fileUriArray;
 

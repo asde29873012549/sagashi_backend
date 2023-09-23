@@ -5,10 +5,10 @@ import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_err
 
 dotenv.config();
 
-export default async function dbLikeListing(req, res) {
-	const likes = Model.Likes;
+export default async function dbGetSingleListingDraft(req, res) {
+	const products = Model.Products;
 
-	const { username, listing_id } = req.body;
+	const { username, product_id } = req.query;
 
 	const jwtUsername = res.locals.user;
 
@@ -16,29 +16,16 @@ export default async function dbLikeListing(req, res) {
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const rows_deleted = await likes.destroy(
+			const draft_listing = await products.findOne(
 				{
 					where: {
-						user_name: username,
-						product_id: listing_id,
+						product_id,
 					},
 				},
 				{ transaction: t },
 			);
 
-			if (rows_deleted === 0) {
-				const created = await likes.create(
-					{
-						user_name: "noah",
-						product_id: listing_id,
-					},
-					{ transaction: t },
-				);
-
-				return created;
-			}
-
-			return rows_deleted;
+			return draft_listing;
 		});
 
 		return result;

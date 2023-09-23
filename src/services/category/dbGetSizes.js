@@ -1,38 +1,34 @@
 import * as dotenv from "dotenv";
 import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_error.js";
+import { DatabaseError, UnknownError } from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbGetListingDraft(req, res) {
-	const products = Model.Products;
+export default async function dbGetSizes(req) {
 	const sizes = Model.Sizes;
+	const sizesCategoriesMap = Model.SizesCategoriesMap;
 
-	const { username } = req.params;
-
-	const jwtUsername = res.locals.user;
-
-	if (username !== jwtUsername) throw new ForbiddenError();
+	const { category_id } = req.params;
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const draft_listing = await products.findAll(
+			const size = await sizesCategoriesMap.findAll(
 				{
-					include: {
-						attributes: ["name"],
-						model: sizes,
-						require: true,
-					},
+					attributes: ["category_id"],
 					where: {
-						seller_name: username,
-						status: "0",
+						category_id,
+					},
+					include: {
+						model: sizes,
+						attributes: ["id", "name"],
+						required: true,
 					},
 				},
 				{ transaction: t },
 			);
 
-			return draft_listing;
+			return size;
 		});
 
 		return result;

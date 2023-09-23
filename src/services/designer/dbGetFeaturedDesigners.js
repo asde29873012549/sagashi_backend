@@ -1,31 +1,24 @@
 import * as dotenv from "dotenv";
 import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_error.js";
+import { DatabaseError, UnknownError } from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbGetUserLikeListing(req, res) {
-	const likes = Model.Likes;
-
-	const { username } = req.params;
-
-	const jwtUsername = res.locals.user;
-
-	if (username !== jwtUsername) throw new ForbiddenError();
+export default async function dbGetFeaturedDesigners() {
+	const featuredDesigners = Model.FeaturedDesigners;
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const liked_listing = await likes.findAll(
+			const featuredDesigner = await featuredDesigners.findAll(
 				{
-					where: {
-						user_name: username,
-					},
+					limit: 8,
+					order: [["created_at", "DESC"]],
 				},
 				{ transaction: t },
 			);
 
-			return liked_listing;
+			return featuredDesigner;
 		});
 
 		return result;

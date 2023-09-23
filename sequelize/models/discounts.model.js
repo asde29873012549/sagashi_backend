@@ -8,10 +8,6 @@ const Discounts = (sequelize) =>
 				type: DataTypes.DECIMAL(3, 2),
 				allowNull: false,
 			},
-			active: {
-				type: DataTypes.STRING(1),
-				defaultValue: 1,
-			},
 		},
 		{
 			sequelize,

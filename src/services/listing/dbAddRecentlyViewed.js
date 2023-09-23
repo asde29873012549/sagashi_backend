@@ -5,10 +5,10 @@ import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_err
 
 dotenv.config();
 
-export default async function dbLikeListing(req, res) {
-	const likes = Model.Likes;
+export default async function dbAddRecentlyViewed(req, res) {
+	const recentlyViewed = Model.RecentlyViewed;
 
-	const { username, listing_id } = req.body;
+	const { username, product_id } = req.body;
 
 	const jwtUsername = res.locals.user;
 
@@ -16,29 +16,15 @@ export default async function dbLikeListing(req, res) {
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const rows_deleted = await likes.destroy(
+			const views = await recentlyViewed.create(
 				{
-					where: {
-						user_name: username,
-						product_id: listing_id,
-					},
+					user_name: username,
+					product_id,
 				},
 				{ transaction: t },
 			);
 
-			if (rows_deleted === 0) {
-				const created = await likes.create(
-					{
-						user_name: "noah",
-						product_id: listing_id,
-					},
-					{ transaction: t },
-				);
-
-				return created;
-			}
-
-			return rows_deleted;
+			return views;
 		});
 
 		return result;

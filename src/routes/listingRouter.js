@@ -10,6 +10,8 @@ router.get("/", listingController.getAllListing);
 router.get("/like", tokenAuthentication, listingController.getListingLikeCount);
 router.post("/like", tokenAuthentication, listingController.likeListing);
 router.get("/like/:username", tokenAuthentication, listingController.getUserLikeListing);
+router.get("/recentlyViewed/:username", tokenAuthentication, listingController.getRecentlyViewed);
+router.post("/recentlyViewed", tokenAuthentication, listingController.addRecentlyViewed);
 router.post(
 	"/create",
 	tokenAuthentication,
@@ -18,6 +20,7 @@ router.post(
 );
 
 router.get("/draft/:username", tokenAuthentication, listingController.getListingDraft);
+router.get("/draft", tokenAuthentication, listingController.getSingleListingDraft);
 router.post(
 	"/draft",
 	tokenAuthentication,
@@ -26,5 +29,8 @@ router.post(
 );
 
 router.get("/:id", listingController.getSingleListing);
+
+router.get("/curation", listingController.getCuration);
+router.get("/curation/:curation_id", listingController.getProductFromCuration);
 
 export default router;

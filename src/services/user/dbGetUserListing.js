@@ -12,6 +12,7 @@ dotenv.config();
 
 export default async function dbGetUserListing(req, res) {
 	const products = Model.Products;
+	const sizes = Model.Sizes;
 
 	const { username } = req.params;
 
@@ -25,6 +26,7 @@ export default async function dbGetUserListing(req, res) {
 		const result = await sequelize.transaction(async (t) => {
 			const user = await products.findAll(
 				{
+					attributes: ["name", "price", "desc", "primary_image", "createdAt"],
 					where: {
 						[Op.and]: [
 							{
@@ -34,6 +36,11 @@ export default async function dbGetUserListing(req, res) {
 							},
 							{ seller_name: username },
 						],
+					},
+					include: {
+						model: sizes,
+						require: true,
+						attributes: ["name"],
 					},
 					limit: 20,
 					order: [["id", "DESC"]],

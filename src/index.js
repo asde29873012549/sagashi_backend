@@ -8,6 +8,9 @@ import listingRoutes from "./routes/listingRouter.js";
 import userRoutes from "./routes/userRouter.js";
 import messageRoutes from "./routes/messageRouter.js";
 import notificationRoutes from "./routes/notificationRouter.js";
+import designerRoutes from "./routes/designerRouter.js";
+import treeRoutes from "./routes/treeRouter.js";
+import categoryRoutes from "./routes/categoryRouter.js";
 
 import errorHandler from "./middleware/errorhandler.js";
 
@@ -32,6 +35,9 @@ app.use("/listing", listingRoutes);
 app.use("/user", userRoutes);
 app.use("/message", messageRoutes);
 app.use("/notification", notificationRoutes);
+app.use("/designer", designerRoutes);
+app.use("/tree", treeRoutes);
+app.use("/category", categoryRoutes);
 app.use(helmet());
 app.use(errorHandler);
 
