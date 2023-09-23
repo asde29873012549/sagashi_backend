@@ -23,6 +23,7 @@ export default async function dbGetUserShippingAddress(req, res) {
 		const result = await sequelize.transaction(async (t) => {
 			const addresses = await address.findAll(
 				{
+					attributes: ["id", "user_name", "address", "city", "country", "postal_code"],
 					where: {
 						user_name: username,
 					},

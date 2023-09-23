@@ -22,6 +22,7 @@ import users from "./models/users.model.js";
 import info from "./models/info.model.js";
 import faqs from "./models/faqs.model.js";
 import products_to_be_sync from "./models/products_to_be_sync.model.js";
+import sizes_categories_map from "./models/sizes_categories_map.model.js";
 
 const pg_channel = process.env.PG_NOTIFY_CHANNEL;
 
@@ -47,6 +48,7 @@ const modelDefiners = [
 	recentlyViewed,
 	shoppingCart,
 	products_to_be_sync,
+	sizes_categories_map,
 ];
 
 modelDefiners.forEach((model) => {

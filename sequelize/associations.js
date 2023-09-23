@@ -20,6 +20,7 @@ const applyAssociations = (sequelize) => {
 		Sizes,
 		Address,
 		Users,
+		SizesCategoriesMap,
 	} = sequelize.models;
 
 	// Users < Products => One-To-Many
@@ -34,9 +35,41 @@ const applyAssociations = (sequelize) => {
 		},
 	});
 
-	// Categories < Sizes => One-To-Many
-	Categories.hasMany(Sizes);
-	Sizes.belongsTo(Categories);
+	// Categories <> Sizes => Many-To-Many through SizesCategoriesMap
+	Categories.belongsToMany(Sizes, {
+		through: {
+			model: SizesCategoriesMap,
+		},
+		foreignKey: "category_id",
+		otherKey: "size_id",
+	});
+	Sizes.belongsToMany(Categories, {
+		through: {
+			model: SizesCategoriesMap,
+		},
+		foreignKey: "size_id",
+		otherKey: "category_id",
+	});
+	Categories.hasMany(SizesCategoriesMap, {
+		foreignKey: {
+			name: "category_id",
+		},
+	});
+	Sizes.hasMany(SizesCategoriesMap, {
+		foreignKey: {
+			name: "size_id",
+		},
+	});
+	SizesCategoriesMap.belongsTo(Categories, {
+		foreignKey: {
+			name: "category_id",
+		},
+	});
+	SizesCategoriesMap.belongsTo(Sizes, {
+		foreignKey: {
+			name: "size_id",
+		},
+	});
 
 	// Curations < Products => One-To-Many
 	Curations.hasMany(Products);

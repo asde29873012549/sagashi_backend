@@ -7,7 +7,7 @@ const Info = (sequelize) =>
 			orderDelivery: {
 				type: DataTypes.TEXT,
 			},
-			returnRefuncd: {
+			returnRefund: {
 				type: DataTypes.TEXT,
 			},
 			contactUs: {

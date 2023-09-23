@@ -15,7 +15,7 @@ export default async function dbGetListing(req) {
 	const { limit, ...restQuery } = req.query;
 
 	const query_template = {
-		size: limit || 3,
+		size: limit || 20,
 		query: {},
 		sort: [{ updated_at: "desc" }],
 	};
@@ -31,7 +31,6 @@ export default async function dbGetListing(req) {
 		"price_ground",
 		"size",
 		"limit",
-		"recentlyViewed",
 		"cursor",
 	];
 
