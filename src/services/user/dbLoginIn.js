@@ -3,7 +3,12 @@ import bcrypt from "bcrypt";
 import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
 import { generateAccessToken, generateRefreshToken } from "../../utils/tokenGenerator.js";
-import { DatabaseError, NotFoundError, UnknownError } from "../../utils/api_error.js";
+import {
+	DatabaseError,
+	NotFoundError,
+	UnknownError,
+	ForbiddenError,
+} from "../../utils/api_error.js";
 
 dotenv.config();
 
@@ -27,21 +32,24 @@ export default async function dbLoginIn(req) {
 
 			const isMatch = await bcrypt.compare(password, user.password);
 
-			if (!isMatch) throw new NotFoundError();
+			if (!isMatch) throw new ForbiddenError();
 
-			const accessToken = generateAccessToken(username);
-			const refreshToken = generateRefreshToken(username);
+			const { accessToken, accessTokenExpireTime } = generateAccessToken(username);
+			const { refreshToken, refreshTokenExpireTime } = generateRefreshToken(username);
 
 			return {
 				username,
+				avatar: user.avatar,
 				accessToken,
 				refreshToken,
+				accessTokenExpireTime,
+				refreshTokenExpireTime,
 			};
 		});
 
 		return result;
 	} catch (err) {
-		if (err instanceof NotFoundError) {
+		if (err instanceof NotFoundError || err instanceof ForbiddenError) {
 			throw err;
 		} else if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);

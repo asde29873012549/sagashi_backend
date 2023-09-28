@@ -6,10 +6,19 @@ dotenv.config();
 const access_token_secret = process.env.ACCESS_TOKEN_SECRET;
 const refresh_token_secret = process.env.REFRESH_TOKEN_SECRET;
 
-const generateAccessToken = (username) =>
-	jwt.sign({ username }, access_token_secret, { expiresIn: "4h" });
+const generateAccessToken = (username) => {
+	const accessTokenExpireTime = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7;
+	return {
+		accessToken: jwt.sign({ username, exp: accessTokenExpireTime }, access_token_secret),
+		accessTokenExpireTime,
+	};
+};
 
-const generateRefreshToken = (username) =>
-	jwt.sign({ username }, refresh_token_secret, { expiresIn: "24h" });
-
+const generateRefreshToken = (username) => {
+	const refreshTokenExpireTime = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30;
+	return {
+		refreshToken: jwt.sign({ username, exp: refreshTokenExpireTime }, refresh_token_secret),
+		refreshTokenExpireTime,
+	};
+};
 export { generateAccessToken, generateRefreshToken };

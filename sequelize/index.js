@@ -19,7 +19,6 @@ import shoppingCart from "./models/shoppingCart.model.js";
 import sizes from "./models/sizes.model.js";
 import userAddress from "./models/userAddress.model.js";
 import users from "./models/users.model.js";
-import info from "./models/info.model.js";
 import faqs from "./models/faqs.model.js";
 import products_to_be_sync from "./models/products_to_be_sync.model.js";
 import sizes_categories_map from "./models/sizes_categories_map.model.js";
@@ -28,14 +27,13 @@ const pg_channel = process.env.PG_NOTIFY_CHANNEL;
 
 const modelDefiners = [
 	users,
+	categories,
 	products,
 	designers,
 	sizes,
 	userAddress,
-	categories,
 	curations,
 	faqs,
-	info,
 	chatrooms,
 	discounts,
 	featuredDesigners,
@@ -107,8 +105,8 @@ CREATE OR REPLACE TRIGGER products_notify
     FOR EACH ROW
     EXECUTE FUNCTION sagashi.notify_trigger();
 `)
-*/
 
+*/
 const Model = sequelize.models;
 
 export default sequelize;

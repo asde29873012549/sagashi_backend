@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.post("/login", userController.login);
 router.post("/register", userController.register);
+router.post("/refreshToken", userController.refreshToken);
 
 router.get("/:username/info", tokenAuthentication, userController.getUserInfo);
 router.post("/:username/info", tokenAuthentication, userController.updateUserInfo);
@@ -38,6 +39,11 @@ router.post("/follow", tokenAuthentication, userController.followUser);
 
 router.get("/:username/shoppingCart", tokenAuthentication, userController.getShopppingCart);
 router.post("/:username/shoppingCart", tokenAuthentication, userController.addShopppingCartItem);
+router.delete(
+	"/:username/shoppingCart/:product_id",
+	tokenAuthentication,
+	userController.deleteShopppingCartItem,
+);
 
 router.get("/:username/chatroom", tokenAuthentication, userController.getChatroom);
 
