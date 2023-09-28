@@ -11,6 +11,7 @@ import notificationRoutes from "./routes/notificationRouter.js";
 import designerRoutes from "./routes/designerRouter.js";
 import treeRoutes from "./routes/treeRouter.js";
 import categoryRoutes from "./routes/categoryRouter.js";
+import searchRoutes from "./routes/searchRouter.js";
 
 import errorHandler from "./middleware/errorhandler.js";
 
@@ -38,6 +39,7 @@ app.use("/notification", notificationRoutes);
 app.use("/designer", designerRoutes);
 app.use("/tree", treeRoutes);
 app.use("/category", categoryRoutes);
+app.use("/search", searchRoutes);
 app.use(helmet());
 app.use(errorHandler);
 

@@ -5,6 +5,7 @@ import dbRegister from "../services/user/dbRegister.js";
 import dbLoginIn from "../services/user/dbLoginIn.js";
 import dbGetShoppingCart from "../services/user/dbGetShoppingCart.js";
 import dbAddShoppingCartItem from "../services/user/dbAddShoppingCartItem.js";
+import dbDeleteShoppingCartItem from "../services/user/dbDeleteShoppingCartItem.js";
 import dbGetUserListing from "../services/user/dbGetUserListing.js";
 import dbGetUserShippingAddress from "../services/user/dbGetUserShippingAddress.js";
 import dbUpdateUserShippingAddress from "../services/user/dbUpdateUserShippingAddress.js";
@@ -14,6 +15,7 @@ import dbGetUserFollwer from "../services/user/dbGetUserFollwer.js";
 import dbFollowUser from "../services/user/dbFollowUser.js";
 import dbSubscribe from "../services/user/dbSubscribe.js";
 import dbGetChatroom from "../services/user/dbGetChatroom.js";
+import dbRefreshToken from "../services/user/dbRefreshToken.js";
 import Response from "../utils/response_template.js";
 
 const userController = {
@@ -56,8 +58,8 @@ const userController = {
 	},
 	register: async (req, res, next) => {
 		try {
-			await dbRegister(req);
-			return res.status(200).json(new Response("Success").success());
+			const data = await dbRegister(req);
+			return res.status(200).json(new Response(data).success());
 		} catch (err) {
 			if (err.status === 404 && err.message === "Resource Already Exist") {
 				return res
@@ -150,6 +152,22 @@ const userController = {
 	subscribe: async (req, res, next) => {
 		try {
 			const data = await dbSubscribe(req, res);
+			return res.status(200).json(new Response(data).success());
+		} catch (err) {
+			return next(err);
+		}
+	},
+	deleteShopppingCartItem: async (req, res, next) => {
+		try {
+			const data = await dbDeleteShoppingCartItem(req, res);
+			return res.status(200).json(new Response(data).success());
+		} catch (err) {
+			return next(err);
+		}
+	},
+	refreshToken: async (req, res, next) => {
+		try {
+			const data = await dbRefreshToken(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
 			return next(err);

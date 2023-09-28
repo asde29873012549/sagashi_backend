@@ -33,4 +33,6 @@ router.get("/:id", listingController.getSingleListing);
 router.get("/curation", listingController.getCuration);
 router.get("/curation/:curation_id", listingController.getProductFromCuration);
 
+router.post("/offer", tokenAuthentication, listingController.createOffer);
+
 export default router;

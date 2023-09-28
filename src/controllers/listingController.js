@@ -11,6 +11,7 @@ import dbGetRecentlyViewed from "../services/listing/dbGetRecentlyViewed.js";
 import dbAddRecentlyViewed from "../services/listing/dbAddRecentlyViewed.js";
 import dbGetCuration from "../services/listing/dbGetCuration.js";
 import dbGetProductFromCuration from "../services/listing/dbGetProductFromCuration.js";
+import dbCreateOffer from "../services/listing/dbCreateOffer.js";
 import Response from "../utils/response_template.js";
 
 const listingController = {
@@ -113,6 +114,14 @@ const listingController = {
 	getProductFromCuration: async (req, res, next) => {
 		try {
 			const data = await dbGetProductFromCuration(req);
+			res.status(200).json(new Response(data).success());
+		} catch (err) {
+			next(err);
+		}
+	},
+	createOffer: async (req, res, next) => {
+		try {
+			const data = await dbCreateOffer(req);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
 			next(err);
