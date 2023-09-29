@@ -63,8 +63,8 @@ export default async function dbRegister(req) {
 			return user;
 		});
 
-		const { accessToken, accessTokenExpireTime } = generateAccessToken(username);
-		const { refreshToken, refreshTokenExpireTime } = generateRefreshToken(username);
+		const { accessToken, accessTokenExpireTime } = generateAccessToken(username || email);
+		const { refreshToken, refreshTokenExpireTime } = generateRefreshToken(username || email);
 
 		return {
 			username: result.username,
