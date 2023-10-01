@@ -12,12 +12,12 @@ function cat_generator(result) {
 			min = obj.start;
 			max = obj.end;
 		} else if (obj.level === 2) {
-			cat[current_department][obj.name] = [];
+			cat[current_department][obj.name] = { id: obj.start, sub: [] };
 			current_category = obj.name;
 			min = obj.start;
 			max = obj.end;
 		} else if (obj.level === 3 && obj.start > min && obj.end < max) {
-			cat[current_department][current_category].push(obj.name);
+			cat[current_department][current_category].sub.push({id: obj.start, name:obj.name});
 		}
 	});
 

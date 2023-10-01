@@ -35,11 +35,11 @@ const Products = (sequelize) =>
 				type: DataTypes.STRING(1),
 				defaultValue: 1,
 			},
-			color_id: {
-				type: DataTypes.SMALLINT,
+			color: {
+				type: DataTypes.STRING(10),
 			},
-			condition_id: {
-				type: DataTypes.SMALLINT,
+			condition: {
+				type: DataTypes.STRING(15),
 			},
 			tags: {
 				type: DataTypes.STRING(512),
@@ -88,7 +88,7 @@ const Products = (sequelize) =>
 			indexes: [
 				{
 					using: "BTREE",
-					fields: ["condition_id"],
+					fields: ["condition"],
 				},
 				{
 					using: "BTREE",

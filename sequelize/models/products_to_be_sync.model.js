@@ -58,14 +58,14 @@ const Products_to_be_sync = (sequelize) =>
 				defaultValue: 1,
 			},
 			color: {
-				type: DataTypes.STRING(20),
+				type: DataTypes.STRING(10),
 				allowNull: false,
 			},
 			discount: {
 				type: DataTypes.DECIMAL(3, 2),
 			},
 			condition: {
-				type: DataTypes.STRING(20),
+				type: DataTypes.STRING(15),
 				allowNull: false,
 			},
 			tags: {
