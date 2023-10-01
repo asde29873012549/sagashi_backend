@@ -1,6 +1,8 @@
 import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
 import createFile from "../../utils/gcp/cloudStorage.js";
+import colorData from "../../data/color.js";
+import conditionData from "../../data/condition.js";
 import {
 	DatabaseError,
 	StorageError,
@@ -8,7 +10,6 @@ import {
 	UnknownError,
 	ForbiddenError,
 } from "../../utils/api_error.js";
-import { formatDateTime } from "../../utils/date.js";
 
 export default async function dbCreateListing(req, res) {
 	const img = req.files;
@@ -24,9 +25,7 @@ export default async function dbCreateListing(req, res) {
 		size,
 		size_id,
 		color,
-		color_id,
 		condition,
-		condition_id,
 		price,
 	} = req.body;
 
@@ -44,6 +43,12 @@ export default async function dbCreateListing(req, res) {
 			throw new ValidationError();
 		}
 	});
+
+	// Check for invalid color & condition data
+	const isColorValid = colorData.find(element => element === color);
+	const isConditionValid = conditionData.find(element => element === condition);
+
+	if (!isColorValid || !isConditionValid) throw new ValidationError();
 
 	try {
 		fileUriArray = await Promise.all(img.map((image) => createFile(image.buffer)));
@@ -82,8 +87,8 @@ export default async function dbCreateListing(req, res) {
 					stock: 1,
 					size_id,
 					designer_id,
-					color_id,
-					condition_id,
+					color,
+					condition,
 					price: numericPrice,
 					desc,
 					tags: purifyTags,

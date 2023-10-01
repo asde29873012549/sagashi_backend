@@ -12,6 +12,8 @@ import dbAddRecentlyViewed from "../services/listing/dbAddRecentlyViewed.js";
 import dbGetCuration from "../services/listing/dbGetCuration.js";
 import dbGetProductFromCuration from "../services/listing/dbGetProductFromCuration.js";
 import dbCreateOffer from "../services/listing/dbCreateOffer.js";
+import dbGetColor from "../services/listing/dbGetColor.js";
+import dbGetCondition from "../services/listing/dbGetCondition.js";
 import Response from "../utils/response_template.js";
 
 const listingController = {
@@ -122,6 +124,22 @@ const listingController = {
 	createOffer: async (req, res, next) => {
 		try {
 			const data = await dbCreateOffer(req);
+			res.status(200).json(new Response(data).success());
+		} catch (err) {
+			next(err);
+		}
+	},
+	getColor: async (req, res, next) => {
+		try {
+			const data = await dbGetColor(req);
+			res.status(200).json(new Response(data).success());
+		} catch (err) {
+			next(err);
+		}
+	},
+	getCondition: async (req, res, next) => {
+		try {
+			const data = await dbGetCondition(req);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
 			next(err);

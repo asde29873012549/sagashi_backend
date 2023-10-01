@@ -5,15 +5,23 @@ import { DatabaseError, UnknownError } from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbGetFeaturedDesigners() {
+export default async function dbGetFeaturedDesigners(req) {
 	const featuredDesigners = Model.FeaturedDesigners;
+	const designers = Model.Designers;
+
+	const { limit } = req.query;
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
 			const featuredDesigner = await featuredDesigners.findAll(
 				{
-					limit: 8,
+					limit: limit || 25,
 					order: [["created_at", "DESC"]],
+					include: {
+						model: designers,
+						required: true,
+						attributes: ["name", "logo"]
+					}
 				},
 				{ transaction: t },
 			);
