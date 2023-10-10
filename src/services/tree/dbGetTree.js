@@ -16,7 +16,9 @@ export default async function dbGetTree(req) {
 	const dept = ["Menswear", "Womenswear"];
 	const condition = ["New/Never Worn", "Gently Used", "Used", "Very Worn"];
 
-	const { department, category } = req.query;
+	let { department, category } = req.query;
+	if (department) department = JSON.parse(decodeURI(department));
+	if (category) category = JSON.parse(decodeURI(category));
 
 	try {
 		const [Category, size, featuredDesigner] = await sequelize.transaction(async (t) => {
@@ -59,16 +61,6 @@ export default async function dbGetTree(req) {
 		tree.Sizes = size_generator(size, categorySplitNum);
 		tree.Designer = featuredDesigner.map((designer) => designer.Designer.name);
 		tree.Condition = condition;
-
-		if (department) {
-			tree.Category = { [department]: tree.Category[department] };
-			tree.Sizes = { [department]: tree.Sizes[department] };
-		}
-
-		if (category) {
-			tree.Category[department] = { [category]: tree.Category[department][category] };
-			tree.Sizes[department] = { [category]: tree.Sizes[department][category] };
-		}
 
 		return tree;
 	} catch (err) {

@@ -17,7 +17,7 @@ function cat_generator(result) {
 			min = obj.start;
 			max = obj.end;
 		} else if (obj.level === 3 && obj.start > min && obj.end < max) {
-			cat[current_department][current_category].sub.push({id: obj.start, name:obj.name});
+			cat[current_department][current_category].sub.push({ id: obj.start, name: obj.name });
 		}
 	});
 
@@ -26,12 +26,12 @@ function cat_generator(result) {
 
 function size_generator(data, categorySplitNum) {
 	const sizeObj = { Menswear: {}, Womenswear: {} };
-
 	data.forEach((obj) => {
 		if (obj.start < categorySplitNum) {
 			sizeObj.Menswear[obj.name] = obj.Sizes.map((nested) => nested.name);
+		} else {
+			sizeObj.Womenswear[obj.name] = obj.Sizes.map((nested) => nested.name);
 		}
-		sizeObj.Womenswear[obj.name] = obj.Sizes.map((nested) => nested.name);
 	});
 
 	return sizeObj;

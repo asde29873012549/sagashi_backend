@@ -20,8 +20,8 @@ export default async function dbGetFeaturedDesigners(req) {
 					include: {
 						model: designers,
 						required: true,
-						attributes: ["name", "logo"]
-					}
+						attributes: ["name", "logo"],
+					},
 				},
 				{ transaction: t },
 			);
