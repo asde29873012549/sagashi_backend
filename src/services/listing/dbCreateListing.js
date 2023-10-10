@@ -8,7 +8,6 @@ import {
 	StorageError,
 	ValidationError,
 	UnknownError,
-	ForbiddenError,
 } from "../../utils/api_error.js";
 
 export default async function dbCreateListing(req, res) {
@@ -18,7 +17,6 @@ export default async function dbCreateListing(req, res) {
 		category,
 		subCategory,
 		subCategory_id,
-		seller_name,
 		item_name,
 		designer,
 		designer_id,
@@ -30,7 +28,6 @@ export default async function dbCreateListing(req, res) {
 	} = req.body;
 
 	const jwtUsername = res.locals.user;
-	if (seller_name !== jwtUsername) throw new ForbiddenError();
 
 	const rest_of_image = {};
 	let fileUriArray;
@@ -45,8 +42,8 @@ export default async function dbCreateListing(req, res) {
 	});
 
 	// Check for invalid color & condition data
-	const isColorValid = colorData.find(element => element === color);
-	const isConditionValid = conditionData.find(element => element === condition);
+	const isColorValid = colorData.find((element) => element === color);
+	const isConditionValid = conditionData.find((element) => element === condition);
 
 	if (!isColorValid || !isConditionValid) throw new ValidationError();
 
@@ -81,7 +78,7 @@ export default async function dbCreateListing(req, res) {
 		const result = await sequelize.transaction(async (t) => {
 			const prod = await products.create(
 				{
-					seller_name,
+					seller_name: jwtUsername,
 					name: item_name,
 					prod_cat_ref_start: subCategory_id,
 					stock: 1,
@@ -103,7 +100,7 @@ export default async function dbCreateListing(req, res) {
 			await products_to_be_sync.create(
 				{
 					prod_id: Number(prod.dataValues.id),
-					seller_name,
+					seller_name: jwtUsername,
 					name: item_name,
 					department,
 					category,

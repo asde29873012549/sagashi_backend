@@ -11,7 +11,6 @@ export default async function dbGetSizes(req) {
 
 	const { category_id } = req.params;
 
-
 	try {
 		const result = await sequelize.transaction(async (t) => {
 			const size = await sizesCategoriesMap.findAll(

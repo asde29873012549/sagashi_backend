@@ -6,7 +6,6 @@ import {
 	StorageError,
 	ValidationError,
 	UnknownError,
-	ForbiddenError,
 } from "../../utils/api_error.js";
 
 export default async function dbSaveListingDraft(req, res) {
@@ -17,20 +16,17 @@ export default async function dbSaveListingDraft(req, res) {
 		department_id,
 		category_id,
 		subCategory_id,
-		seller_name,
 		item_name,
 		designer_id,
 		size_id,
-		color_id,
-		condition_id,
+		color,
+		condition,
 		price,
 		desc,
 		tags,
 	} = req.body;
 
 	const jwtUsername = res.locals.user;
-
-	if (seller_name !== jwtUsername) throw new ForbiddenError();
 
 	const rest_of_image = {};
 	let fileUriArray;
@@ -44,7 +40,7 @@ export default async function dbSaveListingDraft(req, res) {
 		throw new ValidationError();
 	}
 
-	if (img.length > 0) {
+	if (img && img.length > 0) {
 		try {
 			fileUriArray = await Promise.all(img.map((image) => createFile(image.buffer)));
 			if (fileUriArray.length > 1) {
@@ -66,12 +62,12 @@ export default async function dbSaveListingDraft(req, res) {
 			const data = await products.create(
 				{
 					prod_cat_ref_start: subCategory_id || category_id || department_id,
-					seller_name,
+					seller_name: jwtUsername,
 					name: item_name,
 					designer_id,
 					size_id,
-					color_id,
-					condition_id,
+					color,
+					condition,
 					price: numericPrice,
 					desc,
 					tags: purifyTags,

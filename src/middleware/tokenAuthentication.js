@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
-import Response from "../utils/response_template.js";
 import jwt from "jsonwebtoken";
+import Response from "../utils/response_template.js";
 
 dotenv.config();
 

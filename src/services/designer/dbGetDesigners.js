@@ -11,11 +11,8 @@ import hits_extractor from "../../utils/elastic_search/hits_extractor.js";
 dotenv.config();
 
 export default async function dbGetDesigners(req) {
-	const querySizeLimit = 10
-	const result = {
-		pagination:{},
-		pageData: []
-	};
+	const querySizeLimit = 10;
+	let result;
 
 	const { keyword, cursor } = req.query;
 
@@ -27,17 +24,17 @@ export default async function dbGetDesigners(req) {
 	};
 
 	if (keyword) {
-		query_template.query.match = { name: keyword }
+		query_template.query.match = { name: keyword };
 	} else {
-		query_template.query.match_all = {}
+		query_template.query.match_all = {};
 	}
-	
+
 	if (cursor) query_template.search_after = JSON.parse(decodeURI(cursor));
 
 	const es_query = query_template;
 	try {
 		const data = await client.search(es_query);
-		result.pageData = hits_extractor(data);
+		result = hits_extractor(data);
 	} catch (err) {
 		if (err instanceof EsError) {
 			throw new ElasticSearchError(err.name);
@@ -47,8 +44,6 @@ export default async function dbGetDesigners(req) {
 			throw new ServiceUnavailableError();
 		}
 	}
-
-	if (result.pageData.length < querySizeLimit) result.pagination.isEnd = true
 
 	return result;
 }

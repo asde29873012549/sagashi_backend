@@ -11,5 +11,4 @@ router.get("/relatedDesigners/:designer_id", designerController.getRelatedDesign
 router.get("/:designer_id", designerController.getSingleDesigner);
 router.post("/:designer_id", tokenAuthentication, designerController.followDesigner);
 
-
 export default router;

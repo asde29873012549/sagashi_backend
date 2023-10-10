@@ -19,11 +19,6 @@ const color = [
 	"Olive",
 	"Silver",
 	"Gold",
- ];
- 
- export default color;
-  
-  
-  
-  
-  
+];
+
+export default color;
