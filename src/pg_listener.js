@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 import createSubscriber from "pg-listen";
-import mq_listener from "../rabbitmq/listener.js";
+import sysnc_product from "../rabbitmq/postgres_service/publisher.js";
 
 dotenv.config();
 
@@ -22,7 +22,7 @@ const subscriber = createSubscriber({
 
 subscriber.notifications.on(pg_channel, async (payload) => {
 	try {
-		await mq_listener(payload);
+		await sysnc_product(payload);
 	} catch (err) {
 		console.log(err);
 		process.exit(1);

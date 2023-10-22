@@ -1,11 +1,11 @@
 import * as dotenv from "dotenv";
-import mq_connect from "./client.js";
+import mq_connect from "../client.js";
 
 dotenv.config();
 
 const mq_queue = process.env.RABBITMQ_QUEUE;
 
-async function mq_listener(payload) {
+async function sysnc_product(payload) {
 	const connection = await mq_connect();
 	try {
 		const channel = await connection.createChannel();
@@ -18,4 +18,4 @@ async function mq_listener(payload) {
 	}
 }
 
-export default mq_listener;
+export default sysnc_product;

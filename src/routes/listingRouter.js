@@ -12,7 +12,8 @@ router.post("/like", tokenAuthentication, listingController.likeListing);
 router.get("/like/:username", tokenAuthentication, listingController.getUserLikeListing);
 router.get("/color", listingController.getColor);
 router.get("/condition", listingController.getCondition);
-router.get("/recentlyViewed/:username", tokenAuthentication, listingController.getRecentlyViewed);
+router.get("/similar", listingController.getSimilarListing);
+router.get("/recentlyViewed", tokenAuthentication, listingController.getRecentlyViewed);
 router.post("/recentlyViewed", tokenAuthentication, listingController.addRecentlyViewed);
 router.post(
 	"/create",

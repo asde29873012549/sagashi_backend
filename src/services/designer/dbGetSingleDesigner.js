@@ -18,8 +18,8 @@ export default async function dbGetSingleDesigner(req) {
 		query: {},
 	};
 
-	const { id } = req.params;
-	const num_id = Number(id);
+	const { designer_id } = req.params;
+	const num_id = Number(designer_id);
 
 	if (Number.isNaN(num_id)) throw new ValidationError();
 

@@ -9,9 +9,14 @@ function getISODate30DaysAgo() {
 	return isoDateString;
 }
 
+function getNowISODate() {
+	const currentDate = DateTime.now();
+	return currentDate.toISO();
+}
+
 const formatDateTime = () => {
 	const formattedDate = DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss");
 	return formattedDate;
 };
 
-export { getISODate30DaysAgo, formatDateTime };
+export { getISODate30DaysAgo, formatDateTime, getNowISODate };

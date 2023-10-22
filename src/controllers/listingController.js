@@ -14,6 +14,7 @@ import dbGetProductFromCuration from "../services/listing/dbGetProductFromCurati
 import dbCreateOffer from "../services/listing/dbCreateOffer.js";
 import dbGetColor from "../services/listing/dbGetColor.js";
 import dbGetCondition from "../services/listing/dbGetCondition.js";
+import dbGetSimilarListing from "../services/listing/dbGetSimilarListing.js";
 import Response from "../utils/response_template.js";
 
 const listingController = {
@@ -140,6 +141,14 @@ const listingController = {
 	getCondition: async (req, res, next) => {
 		try {
 			const data = await dbGetCondition(req);
+			res.status(200).json(new Response(data).success());
+		} catch (err) {
+			next(err);
+		}
+	},
+	getSimilarListing: async (req, res, next) => {
+		try {
+			const data = await dbGetSimilarListing(req);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
 			next(err);

@@ -1,25 +1,26 @@
 import * as dotenv from "dotenv";
 import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_error.js";
+import { DatabaseError, UnknownError } from "../../utils/api_error.js";
+import { getNowISODate } from "../../utils/date.js";
+
+import publish_notification from "../../../rabbitmq/notification_service/publisher.js";
 
 dotenv.config();
 
 export default async function dbLikeListing(req, res) {
 	const likes = Model.Likes;
 
-	const { username, listing_id } = req.body;
+	const { listing_id, listing_name } = req.body;
 
 	const jwtUsername = res.locals.user;
-
-	if (username !== jwtUsername) throw new ForbiddenError();
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
 			const rows_deleted = await likes.destroy(
 				{
 					where: {
-						user_name: username,
+						user_name: jwtUsername,
 						product_id: listing_id,
 					},
 				},
@@ -29,7 +30,7 @@ export default async function dbLikeListing(req, res) {
 			if (rows_deleted === 0) {
 				const created = await likes.create(
 					{
-						user_name: "noah",
+						user_name: jwtUsername,
 						product_id: listing_id,
 					},
 					{ transaction: t },
@@ -39,6 +40,14 @@ export default async function dbLikeListing(req, res) {
 			}
 
 			return rows_deleted;
+		});
+
+		await publish_notification({
+			type: "like",
+			username: jwtUsername,
+			listing_id,
+			listing_name,
+			timing: getNowISODate(),
 		});
 
 		return result;

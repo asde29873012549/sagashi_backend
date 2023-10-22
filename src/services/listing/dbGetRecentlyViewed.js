@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_error.js";
+import { DatabaseError, UnknownError } from "../../utils/api_error.js";
 
 dotenv.config();
 
@@ -10,21 +10,17 @@ export default async function dbGetRecentlyViewed(req, res) {
 	const products = Model.Products;
 	const sizes = Model.Sizes;
 
-	const { username } = req.params;
-
 	const jwtUsername = res.locals.user;
-
-	if (username !== jwtUsername) throw new ForbiddenError();
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
 			const views = await recentlyViewed.findAll(
 				{
 					where: {
-						user_name: username,
+						user_name: jwtUsername,
 					},
 					include: {
-						attributes: ["name", "price", "desc", "primary_image"],
+						attributes: ["name", "price", "desc", "primary_image", "created_at"],
 						model: products,
 						require: true,
 						include: {
