@@ -3,7 +3,6 @@ export default function hits_extractor(data) {
 	const result = data.hits.hits.map((hit) => {
 		/* eslint-disable*/
 		const hits = hit._source;
-		/* eslint-disable */
 		hits.sort = hit.sort;
 		return hits;
 	});

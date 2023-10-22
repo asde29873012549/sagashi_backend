@@ -41,7 +41,7 @@ const designerController = {
 	},
 	getRelatedDesigners: async (req, res, next) => {
 		try {
-			const data = await dbGetRelatedDesigners();
+			const data = await dbGetRelatedDesigners(req);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
 			return next(err);

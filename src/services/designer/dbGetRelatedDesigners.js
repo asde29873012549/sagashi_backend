@@ -10,13 +10,30 @@ import hits_extractor from "../../utils/elastic_search/hits_extractor.js";
 
 dotenv.config();
 
-export default async function dbGetRelatedDesigners() {
+export default async function dbGetRelatedDesigners(req) {
 	let result;
+	let tagsArray;
+
+	const { tags } = req.query;
+
+	try {
+		tagsArray = JSON.parse(decodeURI(tags));
+	} catch (err) {
+		console.log(err);
+		return new ValidationError();
+	}
 
 	const query_template = {
-		size: 20,
+		_source: ["designer_id", "name", "logo"],
+		size: 9,
 		query: {
-			match_all: {},
+			bool: {
+				should: tagsArray.map((tag) => ({
+					match: {
+						tags: tag,
+					},
+				})),
+			},
 		},
 	};
 
@@ -34,5 +51,5 @@ export default async function dbGetRelatedDesigners() {
 		}
 	}
 
-	return result;
+	return result.slice(1);
 }
