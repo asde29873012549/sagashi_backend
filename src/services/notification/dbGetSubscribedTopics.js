@@ -7,7 +7,7 @@ dotenv.config();
 
 export default async function dbGetSubscribedTopics(req, res) {
 	const follows = Model.Follows;
-	const users = Model.Users;
+	// const users = Model.Users;
 
 	const jwtUsername = res.locals.user;
 

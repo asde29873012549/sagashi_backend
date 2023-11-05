@@ -3,7 +3,6 @@ import mq_connect from "../client.js";
 
 dotenv.config();
 
-const mq_queue = process.env.NOTIFICATION_QUEUE;
 const mq_exchange = process.env.NOTIFICATION_EXCHANGE;
 
 async function publish_notification(payload) {
