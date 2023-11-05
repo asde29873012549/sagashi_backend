@@ -4,8 +4,10 @@ import tokenAuthentication from "../middleware/tokenAuthentication.js";
 
 const router = express.Router();
 
-router.get("/:username", tokenAuthentication, notificationController.getNotifications);
+router.get("/", tokenAuthentication, notificationController.getNotifications);
 router.post("/", tokenAuthentication, notificationController.createNotifications);
 router.put("/", tokenAuthentication, notificationController.readNotifications);
+
+router.get("/subscribedTopics", tokenAuthentication, notificationController.getSubscribedTopics);
 
 export default router;

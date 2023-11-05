@@ -7,9 +7,9 @@ import upload from "../middleware/multer_upload.js";
 const router = express.Router();
 
 router.get("/", listingController.getAllListing);
-router.get("/like", tokenAuthentication, listingController.getListingLikeCount);
+router.get("/like/count", tokenAuthentication, listingController.getListingLikeCount);
 router.post("/like", tokenAuthentication, listingController.likeListing);
-router.get("/like/:username", tokenAuthentication, listingController.getUserLikeListing);
+router.get("/like", tokenAuthentication, listingController.getUserLikeListing);
 router.get("/color", listingController.getColor);
 router.get("/condition", listingController.getCondition);
 router.get("/similar", listingController.getSimilarListing);

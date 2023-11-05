@@ -10,8 +10,9 @@ dotenv.config();
 
 export default async function dbLikeListing(req, res) {
 	const likes = Model.Likes;
+	let isCreateLike = false;
 
-	const { listing_id, listing_name } = req.body;
+	const { listing_id, listing_name, seller_name, listing_image } = req.body;
 
 	const jwtUsername = res.locals.user;
 
@@ -36,19 +37,24 @@ export default async function dbLikeListing(req, res) {
 					{ transaction: t },
 				);
 
+				isCreateLike = true;
+
 				return created;
 			}
 
 			return rows_deleted;
 		});
 
-		await publish_notification({
-			type: "like",
-			username: jwtUsername,
-			listing_id,
-			listing_name,
-			timing: getNowISODate(),
-		});
+		if (isCreateLike)
+			await publish_notification({
+				type: "notification.like",
+				username: jwtUsername,
+				seller_name,
+				listing_id,
+				listing_name,
+				image: listing_image,
+				timing: getNowISODate(),
+			});
 
 		return result;
 	} catch (err) {

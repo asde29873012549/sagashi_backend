@@ -1,22 +1,20 @@
 import * as dotenv from "dotenv";
 import { BaseError as SequelizeGenericError, Op } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_error.js";
+import { DatabaseError, UnknownError } from "../../utils/api_error.js";
 
 dotenv.config();
 
 export default async function dbGetNotification(req, res) {
 	const notification = Model.Notifications;
 
-	const { username, cursor } = req.params;
+	const { cursor } = req.params;
 
 	const jwtUsername = res.locals.user;
 
-	if (username !== jwtUsername) throw new ForbiddenError();
-
 	const sqlObj = {
 		where: {
-			receiver_name: username,
+			receiver_name: jwtUsername,
 		},
 		order: [["create_date", "desc"]],
 		limit: 10,
@@ -33,9 +31,7 @@ export default async function dbGetNotification(req, res) {
 
 		return result;
 	} catch (err) {
-		if (err instanceof ForbiddenError) {
-			throw err;
-		} else if (err instanceof SequelizeGenericError) {
+		if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);
 		}
 		throw new UnknownError();

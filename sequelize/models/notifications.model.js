@@ -18,8 +18,8 @@ const Notifications = (sequelize) =>
 					key: "username",
 				},
 			},
-			message: {
-				type: DataTypes.TEXT,
+			notification_type: {
+				type: DataTypes.STRING(1),
 				allowNull: false,
 			},
 			link: {
