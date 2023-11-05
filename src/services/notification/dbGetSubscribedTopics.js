@@ -5,23 +5,34 @@ import { DatabaseError, UnknownError } from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbGetUserLikeListing(req, res) {
-	const likes = Model.Likes;
+export default async function dbGetSubscribedTopics(req, res) {
+	const follows = Model.Follows;
+	const users = Model.Users;
 
 	const jwtUsername = res.locals.user;
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const liked_listing = await likes.findAll(
+			const followed_users = await follows.findAll(
 				{
+					attributes: ["user_name"],
 					where: {
-						user_name: jwtUsername,
+						follower_name: jwtUsername,
 					},
+					/* include: {
+					model: users,
+					require: true,
+					attributes: ["avatar"]
+				} */
 				},
 				{ transaction: t },
 			);
 
-			return liked_listing;
+			/* const subscribedTopics = {
+				followed_users
+			} */
+
+			return followed_users; // subscribedTopics;
 		});
 
 		return result;

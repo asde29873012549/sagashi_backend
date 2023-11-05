@@ -1,12 +1,7 @@
 import * as dotenv from "dotenv";
 import { BaseError as SequelizeGenericError, Op } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import {
-	DatabaseError,
-	NotFoundError,
-	UnknownError,
-	ForbiddenError,
-} from "../../utils/api_error.js";
+import { DatabaseError, NotFoundError, UnknownError } from "../../utils/api_error.js";
 
 dotenv.config();
 
@@ -14,13 +9,9 @@ export default async function dbGetUserListing(req, res) {
 	const products = Model.Products;
 	const sizes = Model.Sizes;
 
-	const { username } = req.params;
-
 	const { cursor } = req.query;
 
 	const jwtUsername = res.locals.user;
-
-	if (username !== jwtUsername) throw new ForbiddenError();
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
@@ -34,7 +25,7 @@ export default async function dbGetUserListing(req, res) {
 									[Op.gt]: cursor || 0,
 								},
 							},
-							{ seller_name: username },
+							{ seller_name: jwtUsername },
 						],
 					},
 					include: {
@@ -54,7 +45,7 @@ export default async function dbGetUserListing(req, res) {
 		return result;
 	} catch (err) {
 		console.log(err);
-		if (err instanceof ForbiddenError || err instanceof NotFoundError) {
+		if (err instanceof NotFoundError) {
 			throw err;
 		} else if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);

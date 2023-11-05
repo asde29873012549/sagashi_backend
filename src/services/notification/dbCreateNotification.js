@@ -9,21 +9,18 @@ dotenv.config();
 export default async function dbCreateNotification(req, res) {
 	const notification = Model.Notifications;
 
-	const { sender_name, receiver_name, message, link, isRead } = req.body;
+	const { receiver_name, notification_type, link } = req.body;
 
 	const jwtUsername = res.locals.user;
-
-	if (sender_name !== jwtUsername) throw new ForbiddenError();
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
 			const notifications = await notification.create(
 				{
-					sender_name,
+					sender_name: jwtUsername,
 					receiver_name,
-					message,
+					notification_type,
 					link,
-					read_at: isRead ? formatDateTime() : null,
 				},
 				{ transaction: t },
 			);
