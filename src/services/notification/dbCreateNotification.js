@@ -1,7 +1,6 @@
 import * as dotenv from "dotenv";
 import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { formatDateTime } from "../../utils/date.js";
 import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_error.js";
 
 dotenv.config();
