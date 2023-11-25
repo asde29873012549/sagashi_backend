@@ -1,37 +1,39 @@
 import * as dotenv from "dotenv";
 import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_error.js";
+import {
+	DatabaseError,
+	NotFoundError,
+	UnknownError,
+	ForbiddenError,
+} from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbCreateNotification(req, res) {
-	const notification = Model.Notifications;
+export default async function dbCheckIsFollow(req, res) {
+	const follows = Model.Follows;
+	const { user } = req.body;
 
-	const { receiver_name, type, link, image, content } = req.body;
 	const jwtUsername = res.locals.user;
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const notifications = await notification.create(
+			const isFollow = await follows.findOne(
 				{
-					sender_name: jwtUsername,
-					receiver_name,
-					type,
-					image,
-					content,
-					link,
+					where: {
+						user_name: user,
+						follower_name: jwtUsername,
+					},
 				},
 				{ transaction: t },
 			);
 
-			return notifications;
+			return isFollow;
 		});
 
 		return result;
 	} catch (err) {
-		console.log(err);
-		if (err instanceof ForbiddenError) {
+		if (err instanceof ForbiddenError || err instanceof NotFoundError) {
 			throw err;
 		} else if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);

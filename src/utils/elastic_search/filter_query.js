@@ -3,7 +3,8 @@ import { ValidationError } from "../api_error.js";
 const filterQuery = (query_template, filters) => {
 	const es_query = query_template;
 	es_query.query.bool = {
-		filter: [],
+		...(es_query.query.bool ?? {}),
+		filter: [...(es_query.query.bool?.filter ?? [])],
 	};
 
 	const range_query = {
@@ -42,10 +43,10 @@ const filterQuery = (query_template, filters) => {
 						bool: { filter: [] },
 					};
 
-					obj.forEach((key) => {
+					Object.keys(obj).forEach((key) => {
 						bool_filter_template.bool.filter.push({
 							term: {
-								[key === "name" ? defaultKey : key_helper(key)]: obj[key],
+								[defaultKey && key === "name" ? defaultKey : key_helper(key)]: obj[key],
 							},
 						});
 					});

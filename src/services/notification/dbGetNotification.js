@@ -16,7 +16,7 @@ export default async function dbGetNotification(req, res) {
 		where: {
 			receiver_name: jwtUsername,
 		},
-		order: [["create_date", "desc"]],
+		order: [["created_at", "desc"]],
 		limit: 10,
 	};
 

@@ -53,7 +53,8 @@ export default async function dbLikeListing(req, res) {
 				listing_id,
 				listing_name,
 				image: listing_image,
-				timing: getNowISODate(),
+				created_at: getNowISODate(),
+				link: `/shop/${listing_id}`,
 			});
 
 		return result;

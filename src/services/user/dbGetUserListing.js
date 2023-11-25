@@ -1,55 +1,87 @@
 import * as dotenv from "dotenv";
-import { BaseError as SequelizeGenericError, Op } from "sequelize";
-import sequelize, { Model } from "../../../sequelize/index.js";
-import { DatabaseError, NotFoundError, UnknownError } from "../../utils/api_error.js";
+import { errors as EsError } from "@elastic/elasticsearch";
+import {
+	ServiceUnavailableError,
+	ValidationError,
+	ElasticSearchError,
+} from "../../utils/api_error.js";
+import client from "../../../elastic_search/client.js";
+import hits_extractor from "../../utils/elastic_search/hits_extractor.js";
+import filter_query from "../../utils/elastic_search/filter_query.js";
+import validator from "../../utils/elastic_search/validator.js";
 
 dotenv.config();
 
-export default async function dbGetUserListing(req, res) {
-	const products = Model.Products;
-	const sizes = Model.Sizes;
+export default async function dbGetUserListing(req) {
+	let result;
 
-	const { cursor } = req.query;
+	const { user } = req.query;
 
-	const jwtUsername = res.locals.user;
+	const filterQuery = req.body || {};
 
-	try {
-		const result = await sequelize.transaction(async (t) => {
-			const user = await products.findAll(
-				{
-					attributes: ["name", "price", "desc", "primary_image", "createdAt"],
-					where: {
-						[Op.and]: [
-							{
-								id: {
-									[Op.gt]: cursor || 0,
-								},
-							},
-							{ seller_name: jwtUsername },
-						],
-					},
-					include: {
-						model: sizes,
-						require: true,
-						attributes: ["name"],
-					},
-					limit: 20,
-					order: [["id", "DESC"]],
-				},
-				{ transaction: t },
-			);
+	const query_template = {
+		size: 5,
+		query: {},
+		sort: [{ updated_at: "desc" }],
+	};
 
-			return user;
-		});
+	const support_queries = [
+		"department",
+		"designers",
+		"category",
+		"subCategory",
+		"condition",
+		"newArrivals",
+		"price_ceil",
+		"price_ground",
+		"sizes",
+		"limit",
+		"cursor",
+	];
 
-		return result;
-	} catch (err) {
-		console.log(err);
-		if (err instanceof NotFoundError) {
-			throw err;
-		} else if (err instanceof SequelizeGenericError) {
-			throw new DatabaseError(err.name);
+	// check for invalid query param
+	const validated = validator(support_queries, filterQuery);
+
+	if (validated.length === 0 || (validated.includes("cursor") && validated.length === 1)) {
+		// if no filter specified or cursor is the only filter
+		// get all listing
+		const es_query = query_template;
+		if (validated.includes("cursor")) es_query.search_after = filterQuery.cursor;
+
+		try {
+			const data = await client.search(es_query);
+			result = {
+				total: data.hits.total.value,
+				result: hits_extractor(data),
+			};
+		} catch (err) {
+			if (err instanceof EsError) {
+				throw new ElasticSearchError(err.name);
+			} else if (err instanceof ValidationError) {
+				throw err;
+			} else {
+				throw new ServiceUnavailableError();
+			}
 		}
-		throw new UnknownError();
+	} else {
+		try {
+			const query = filter_query(query_template, filterQuery);
+			query.query.bool.filter.push({ term: { seller_name: user } });
+			const data = await client.search(query);
+			result = {
+				total: data.hits.total.value,
+				result: hits_extractor(data),
+			};
+		} catch (err) {
+			if (err instanceof EsError) {
+				throw new ElasticSearchError(err.name);
+			} else if (err instanceof ValidationError) {
+				throw err;
+			} else {
+				throw new ServiceUnavailableError();
+			}
+		}
 	}
+
+	return result;
 }

@@ -7,11 +7,11 @@ const router = express.Router();
 router.post("/login", userController.login);
 router.post("/register", userController.register);
 router.post("/refreshToken", userController.refreshToken);
+router.get("/listing", tokenAuthentication, userController.getUserListing);
 
 router.get("/:username/info", tokenAuthentication, userController.getUserInfo);
 router.post("/:username/info", tokenAuthentication, userController.updateUserInfo);
-
-router.get("/:username/listing", tokenAuthentication, userController.getUserListing);
+router.get("/public/:username/info", userController.getPublicUserInfo);
 
 router.get(
 	"/:username/shippingAddress",
@@ -35,6 +35,7 @@ router.delete(
 );
 
 router.get("/:username/follow", tokenAuthentication, userController.getUserFollwer);
+router.post("/follow/check", tokenAuthentication, userController.checkIsFollow);
 router.post("/follow", tokenAuthentication, userController.followUser);
 
 router.get("/:username/shoppingCart", tokenAuthentication, userController.getShopppingCart);
