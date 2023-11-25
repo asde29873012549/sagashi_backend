@@ -9,14 +9,12 @@ import hits_extractor from "../../utils/elastic_search/hits_extractor.js";
 import filter_query from "../../utils/elastic_search/filter_query.js";
 import validator from "../../utils/elastic_search/validator.js";
 
-import LZString from "lz-string";
-
 export default async function dbGetListing(req) {
 	let result;
 
-	const { filter } = req.query;
+	const { user } = req.query;
 
-	const filterQuery = filter ? JSON.parse(LZString.decompressFromEncodedURIComponent(filter)) : {};
+	const filterQuery = req.body || {};
 
 	const query_template = {
 		size: 5,
@@ -45,7 +43,14 @@ export default async function dbGetListing(req) {
 		// if no filter specified or cursor is the only filter
 		// get all listing
 		const es_query = query_template;
-		es_query.query.match_all = {};
+		es_query.query = user
+			? {
+					bool: {
+						filter: [{ term: { seller_name: user } }],
+					},
+			  }
+			: { match_all: {} };
+
 		if (validated.includes("cursor")) es_query.search_after = filterQuery.cursor;
 
 		try {
@@ -66,6 +71,8 @@ export default async function dbGetListing(req) {
 	} else {
 		try {
 			const query = filter_query(query_template, filterQuery);
+			if (user) query.query.bool.filter.push({ term: { seller_name: user } });
+
 			const data = await client.search(query);
 			result = {
 				total: data.hits.total.value,

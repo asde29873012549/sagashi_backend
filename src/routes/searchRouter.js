@@ -3,6 +3,7 @@ import searchController from "../controllers/searchController.js";
 
 const router = express.Router();
 
-router.get("/", searchController.searchKeyword);
+router.post("/", searchController.searchKeyword);
+router.get("/guideKeyword", searchController.guideKeyword);
 
 export default router;

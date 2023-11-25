@@ -26,11 +26,10 @@ export default async function dbGetUserInfo(req, res) {
 					where: {
 						username,
 					},
+					attributes: { exclude: ["password"] },
 				},
 				{ transaction: t },
 			);
-
-			delete user.dataValues.password;
 
 			return user;
 		});

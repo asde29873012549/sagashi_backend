@@ -28,8 +28,7 @@ const validator = (valid_query, filter) => {
 
 	// newArrivals params
 	if (req_queries.includes("newArrivals")) {
-		if (filter.newArrivals !== "true" && filter.newArrivals !== "false")
-			throw new ValidationError();
+		if (filter.newArrivals !== true && filter.newArrivals !== false) throw new ValidationError();
 	}
 
 	return req_queries;

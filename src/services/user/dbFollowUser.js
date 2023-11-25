@@ -7,33 +7,61 @@ import {
 	UnknownError,
 	ForbiddenError,
 } from "../../utils/api_error.js";
+import publish_notification from "../../../rabbitmq/notification_service/publisher.js";
+import { getNowISODate } from "../../utils/date.js";
 
 dotenv.config();
 
 export default async function dbFollowUser(req, res) {
 	const follows = Model.Follows;
+	let isCreateFollow = false;
 
-	const { username, follow_user } = req.body;
+	const { follow_user, user_image } = req.body;
 
 	const jwtUsername = res.locals.user;
 
-	if (username !== jwtUsername) throw new ForbiddenError();
-
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const user = await follows.create(
+			const rows_deleted = await follows.destroy(
 				{
-					user_name: follow_user,
-					follower_name: username,
+					where: {
+						user_name: follow_user,
+						follower_name: jwtUsername,
+					},
 				},
 				{ transaction: t },
 			);
 
-			return user;
+			if (rows_deleted === 0) {
+				const created = await follows.create(
+					{
+						user_name: follow_user,
+						follower_name: jwtUsername,
+					},
+					{ transaction: t },
+				);
+
+				isCreateFollow = true;
+
+				return created;
+			}
+
+			return rows_deleted;
 		});
+
+		if (isCreateFollow)
+			await publish_notification({
+				type: "notification.follow",
+				username: jwtUsername,
+				followed_user: follow_user,
+				image: user_image,
+				created_at: getNowISODate(),
+				link: `/user/public/${jwtUsername}`,
+			});
 
 		return result;
 	} catch (err) {
+		console.log(err);
 		if (err instanceof ForbiddenError || err instanceof NotFoundError) {
 			throw err;
 		} else if (err instanceof SequelizeGenericError) {

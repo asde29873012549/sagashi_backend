@@ -18,15 +18,26 @@ const Notifications = (sequelize) =>
 					key: "username",
 				},
 			},
-			notification_type: {
-				type: DataTypes.STRING(1),
+			type: {
+				type: DataTypes.STRING(20),
 				allowNull: false,
+			},
+			image: {
+				type: DataTypes.STRING(512),
+			},
+			content: {
+				type: DataTypes.JSONB,
 			},
 			link: {
 				type: DataTypes.STRING(512),
 			},
 			read_at: {
 				type: DataTypes.DATE,
+			},
+			created_at: {
+				type: DataTypes.DATE,
+				allowNull: false,
+				defaultValue: DataTypes.NOW,
 			},
 		},
 		{
@@ -36,6 +47,7 @@ const Notifications = (sequelize) =>
 			freezeTableName: true,
 			timestamps: true,
 			updatedAt: false,
+			createdAt: "created_at",
 			indexes: [
 				{
 					using: "BTREE",
