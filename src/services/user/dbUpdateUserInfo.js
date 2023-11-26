@@ -6,46 +6,41 @@ import {
 	NotFoundError,
 	ForbiddenError,
 	UnknownError,
+	ValidationError,
 } from "../../utils/api_error.js";
 
 dotenv.config();
 
 export default async function dbUpdateUserInfo(req, res) {
 	const users = Model.Users;
+	const upDateObj = {};
 
-	const {
-		username,
-		avatar,
-		email,
-		birth_date,
-		gender,
-		shipping_address,
-		language,
-		country,
-		fullname,
-	} = req.body;
+	const validFields = [
+		"username",
+		"avatar",
+		"email",
+		"birth_date",
+		"gender",
+		"shipping_address",
+		"language",
+		"country",
+		"fullname",
+	];
 
 	const jwtUsername = res.locals.user;
 
-	if (username !== jwtUsername) throw new ForbiddenError();
-
 	try {
+		Object.keys(req.body).forEach((key) => {
+			if (!validFields.includes(key)) throw new ValidationError();
+			if (req.body[key]) upDateObj[key] = req.body[key];
+		});
+
 		const result = await sequelize.transaction(async (t) => {
 			const user = await users.update(
-				{
-					username,
-					avatar,
-					email,
-					birth_date,
-					gender,
-					shipping_address,
-					language,
-					country,
-					fullname,
-				},
+				upDateObj,
 				{
 					where: {
-						username,
+						username: jwtUsername,
 					},
 				},
 				{ transaction: t },

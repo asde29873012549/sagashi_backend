@@ -13,17 +13,15 @@ dotenv.config();
 export default async function dbUpdateUserShippingAddress(req, res) {
 	const addresses = Model.Address;
 
-	const { id, username, address, city, country, postal_code } = req.body;
+	const { id, address, city, country, postal_code } = req.body;
 
 	const jwtUsername = res.locals.user;
 
-	if (username !== jwtUsername) throw new ForbiddenError();
-
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const address_result = await addresses.update(
+			const address_result = await addresses.upsert(
 				{
-					user_name: username,
+					user_name: jwtUsername,
 					address,
 					city,
 					country,

@@ -100,7 +100,6 @@ export default async function dbGuideKeyword(req) {
 			popular: popularData(),
 		};
 	} catch (err) {
-		console.log(err);
 		if (err instanceof EsError) {
 			throw new ElasticSearchError(err.name);
 		} else if (err instanceof ValidationError) {

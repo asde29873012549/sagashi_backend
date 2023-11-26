@@ -13,17 +13,15 @@ dotenv.config();
 export default async function dbCreateUserShippingAddress(req, res) {
 	const addresses = Model.Address;
 
-	const { username, address, city, country, postal_code } = req.body;
+	const { address, city, country, postal_code } = req.body;
 
 	const jwtUsername = res.locals.user;
-
-	if (username !== jwtUsername) throw new ForbiddenError();
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
 			const address_result = await addresses.create(
 				{
-					user_name: username,
+					user_name: jwtUsername,
 					address,
 					city,
 					country,
