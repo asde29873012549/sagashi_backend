@@ -102,8 +102,8 @@ export default async function dbSearchKeyword(req) {
 								match: {
 									"subCategory.text": {
 										query: keyword,
-										fuziness: 1,
-										boost: 5,
+										fuzziness: 1,
+										boost: 15,
 									},
 								},
 							},
@@ -155,6 +155,7 @@ export default async function dbSearchKeyword(req) {
 				result: hits_extractor(data),
 			};
 		} catch (err) {
+			console.log(err);
 			if (err instanceof EsError) {
 				throw new ElasticSearchError(err.name);
 			} else if (err instanceof ValidationError) {
@@ -183,7 +184,6 @@ export default async function dbSearchKeyword(req) {
 				result: hits_extractor(data),
 			};
 		} catch (err) {
-			console.log(err, "Errr");
 			if (err instanceof EsError) {
 				throw new ElasticSearchError(err.name);
 			} else if (err instanceof ValidationError) {
