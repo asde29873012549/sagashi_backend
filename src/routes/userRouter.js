@@ -10,7 +10,7 @@ router.post("/refreshToken", userController.refreshToken);
 router.get("/listing", tokenAuthentication, userController.getUserListing);
 
 router.get("/:username/info", tokenAuthentication, userController.getUserInfo);
-router.post("/:username/info", tokenAuthentication, userController.updateUserInfo);
+router.put("/:username/info", tokenAuthentication, userController.updateUserInfo);
 router.get("/public/:username/info", userController.getPublicUserInfo);
 
 router.get(

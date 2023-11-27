@@ -26,7 +26,26 @@ export default async function dbGetUserInfo(req, res) {
 					where: {
 						username,
 					},
-					attributes: { exclude: ["password"] },
+					attributes: [
+						"username",
+						"fullname",
+						"email",
+						"avatar",
+						"birth_date",
+						"gender",
+						"country",
+						"created_at",
+						// Subquery to count the followers
+						[
+							sequelize.literal(`(
+						SELECT COUNT(*)
+						FROM "sagashi"."Follows" AS "Follows"
+						WHERE
+						  "Follows"."user_name" = "Users"."username"
+					  )`),
+							"follower_count",
+						],
+					],
 				},
 				{ transaction: t },
 			);

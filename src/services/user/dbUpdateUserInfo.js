@@ -52,7 +52,7 @@ export default async function dbUpdateUserInfo(req, res) {
 		if (!result) throw new NotFoundError();
 		return result;
 	} catch (err) {
-		if (err instanceof NotFoundError || err instanceof ForbiddenError) {
+		if (err instanceof NotFoundError || err instanceof ForbiddenError || err instanceof ValidationError) {
 			throw err;
 		} else if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);

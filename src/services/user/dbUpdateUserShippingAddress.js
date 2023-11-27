@@ -19,7 +19,7 @@ export default async function dbUpdateUserShippingAddress(req, res) {
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const address_result = await addresses.upsert(
+			const address_result = await addresses.update(
 				{
 					user_name: jwtUsername,
 					address,
