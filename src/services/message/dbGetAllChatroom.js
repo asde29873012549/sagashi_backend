@@ -1,38 +1,27 @@
 import * as dotenv from "dotenv";
-import { BaseError as SequelizeGenericError } from "sequelize";
+import { BaseError as SequelizeGenericError, Op } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
 import { DatabaseError, UnknownError } from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbGetSubscribedTopics(req, res) {
-	const follows = Model.Follows;
-	// const users = Model.Users;
+export default async function GetAllChatroom(req, res) {
+	const chatrooms = Model.Chatrooms;
 
 	const jwtUsername = res.locals.user;
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const followed_users = await follows.findAll(
+			const message = await chatrooms.findAll(
 				{
-					attributes: ["user_name"],
 					where: {
-						follower_name: jwtUsername,
+						[Op.or]: [{ seller_name: jwtUsername }, { buyer_name: jwtUsername }],
 					},
-					/* include: {
-					model: users,
-					require: true,
-					attributes: ["avatar"]
-				} */
 				},
 				{ transaction: t },
 			);
 
-			/* const subscribedTopics = {
-				followed_users
-			} */
-
-			return followed_users; // subscribedTopics;
+			return message;
 		});
 
 		return result;

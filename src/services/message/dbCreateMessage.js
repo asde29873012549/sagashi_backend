@@ -1,8 +1,10 @@
 import * as dotenv from "dotenv";
 import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { formatDateTime } from "../../utils/date.js";
+import { formatDateTime, getNowISODate } from "../../utils/date.js";
 import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_error.js";
+
+import publish_notification from "../../../rabbitmq/notification_service/publisher.js";
 
 dotenv.config();
 
@@ -10,22 +12,23 @@ export default async function dbCreateMessage(req, res) {
 	const messages = Model.Messages;
 	const chatrooms = Model.Chatrooms;
 
-	const { product_id, seller_name, buyer_name, sender_name, chatroom_id, text, isRead } = req.body;
+	const { product_id, seller_name, buyer_name, isFirstMessage, text, isRead } = req.body;
 
 	const jwtUsername = res.locals.user;
 
-	if (sender_name !== jwtUsername) throw new ForbiddenError();
+	const chatroom_id = `${product_id}-${seller_name}-${buyer_name}`;
 
-	if (!chatroom_id) {
-		const new_chatroom_id = `${product_id}-${seller_name}-${buyer_name}`;
+	let result;
+
+	if (isFirstMessage) {
 		try {
-			const result = await sequelize.transaction(async (t) => {
+			result = await sequelize.transaction(async (t) => {
 				await chatrooms.create(
 					{
-						id: new_chatroom_id,
+						id: chatroom_id,
 						seller_name,
 						buyer_name,
-						last_sent_user_name: sender_name,
+						last_sent_user_name: jwtUsername,
 						last_message: text,
 					},
 					{ transaction: t },
@@ -33,8 +36,8 @@ export default async function dbCreateMessage(req, res) {
 
 				const message = await messages.create(
 					{
-						sender_name,
-						chatroom_id: new_chatroom_id,
+						sender_name: jwtUsername,
+						chatroom_id,
 						text,
 						read_at: isRead ? formatDateTime() : null,
 					},
@@ -43,8 +46,6 @@ export default async function dbCreateMessage(req, res) {
 
 				return message;
 			});
-
-			return result;
 		} catch (err) {
 			if (err instanceof SequelizeGenericError) {
 				throw new DatabaseError(err.name);
@@ -53,10 +54,10 @@ export default async function dbCreateMessage(req, res) {
 		}
 	} else {
 		try {
-			const result = await sequelize.transaction(async (t) => {
+			result = await sequelize.transaction(async (t) => {
 				const message = await messages.create(
 					{
-						sender_name,
+						sender_name: jwtUsername,
 						chatroom_id,
 						text,
 						read_at: isRead ? formatDateTime() : null,
@@ -66,7 +67,7 @@ export default async function dbCreateMessage(req, res) {
 
 				const updatedRow = await chatrooms.update(
 					{
-						last_sent_user_name: sender_name,
+						last_sent_user_name: jwtUsername,
 						last_message: text,
 					},
 					{
@@ -78,8 +79,6 @@ export default async function dbCreateMessage(req, res) {
 
 				return [message, updatedRow];
 			});
-
-			return result;
 		} catch (err) {
 			if (err instanceof ForbiddenError) {
 				throw err;
@@ -89,4 +88,20 @@ export default async function dbCreateMessage(req, res) {
 			throw new UnknownError();
 		}
 	}
+
+	if (result) {
+		await publish_notification({
+			type: "notification.message",
+			sender_name: jwtUsername,
+			buyer_name,
+			seller_name,
+			listing_id: product_id,
+			text,
+			// image: listing_image,
+			created_at: getNowISODate(),
+			// link: `/shop/${listing_id}`,
+		});
+	}
+
+	return result;
 }

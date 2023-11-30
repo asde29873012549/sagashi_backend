@@ -8,6 +8,6 @@ router.get("/", tokenAuthentication, notificationController.getNotifications);
 router.post("/", tokenAuthentication, notificationController.createNotifications);
 router.put("/", tokenAuthentication, notificationController.readNotifications);
 
-router.get("/subscribedTopics", tokenAuthentication, notificationController.getSubscribedTopics);
+router.get("/subscriber", tokenAuthentication, notificationController.getSubscriber);
 
 export default router;

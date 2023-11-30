@@ -10,6 +10,8 @@ import hits_extractor from "../../utils/elastic_search/hits_extractor.js";
 
 dotenv.config();
 
+const designer_index = process.env.ES_DESIGNER_INDEX;
+
 export default async function dbGetDesigners(req) {
 	const querySizeLimit = 10;
 	let result;
@@ -19,6 +21,7 @@ export default async function dbGetDesigners(req) {
 	const query_template = {
 		_source: ["designer_id", "name"],
 		size: querySizeLimit,
+		index: designer_index,
 		query: {},
 		sort: [{ designer_id: "asc" }],
 	};

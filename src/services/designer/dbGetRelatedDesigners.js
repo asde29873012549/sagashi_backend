@@ -10,6 +10,8 @@ import hits_extractor from "../../utils/elastic_search/hits_extractor.js";
 
 dotenv.config();
 
+const designer_index = process.env.ES_DESIGNER_INDEX;
+
 export default async function dbGetRelatedDesigners(req) {
 	let result;
 	let tagsArray;
@@ -26,6 +28,7 @@ export default async function dbGetRelatedDesigners(req) {
 	const query_template = {
 		_source: ["designer_id", "name", "logo"],
 		size: 9,
+		index: designer_index,
 		query: {
 			bool: {
 				should: tagsArray.map((tag) => ({

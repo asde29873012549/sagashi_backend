@@ -21,6 +21,7 @@ const applyAssociations = (sequelize) => {
 		Address,
 		Users,
 		SizesCategoriesMap,
+		ProductsCurationsMap,
 	} = sequelize.models;
 
 	// Users < Products => One-To-Many
@@ -72,8 +73,8 @@ const applyAssociations = (sequelize) => {
 	});
 
 	// Curations < Products => One-To-Many
-	Curations.hasMany(Products);
-	Products.belongsTo(Curations);
+	//Curations.hasMany(Products);
+	//Products.belongsTo(Curations);
 
 	// Users < Chatrooms => One-To-Many
 	Users.hasMany(Chatrooms, {
@@ -388,6 +389,42 @@ const applyAssociations = (sequelize) => {
 	Address.belongsTo(Users, {
 		foreignKey: {
 			name: "user_name",
+		},
+	});
+
+	// Products <> Curations Many-To-Many through ProductsCurationsMap
+	Products.belongsToMany(Curations, {
+		through: {
+			model: ProductsCurationsMap,
+		},
+		foreignKey: "product_id",
+		otherKey: "curation_id",
+	});
+	Curations.belongsToMany(Products, {
+		through: {
+			model: ProductsCurationsMap,
+		},
+		foreignKey: "curation_id",
+		otherKey: "product_id",
+	});
+	Products.hasMany(ProductsCurationsMap, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	Curations.hasMany(ProductsCurationsMap, {
+		foreignKey: {
+			name: "curation_id",
+		},
+	});
+	ProductsCurationsMap.belongsTo(Products, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	ProductsCurationsMap.belongsTo(Curations, {
+		foreignKey: {
+			name: "curation_id",
 		},
 	});
 };

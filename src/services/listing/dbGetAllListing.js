@@ -9,6 +9,8 @@ import hits_extractor from "../../utils/elastic_search/hits_extractor.js";
 import filter_query from "../../utils/elastic_search/filter_query.js";
 import validator from "../../utils/elastic_search/validator.js";
 
+const product_index = process.env.ES_PRODUCT_INDEX;
+
 export default async function dbGetListing(req) {
 	let result;
 
@@ -18,6 +20,7 @@ export default async function dbGetListing(req) {
 
 	const query_template = {
 		size: 5,
+		index: product_index,
 		query: {},
 		sort: [{ updated_at: "desc" }],
 	};
@@ -79,6 +82,7 @@ export default async function dbGetListing(req) {
 				result: hits_extractor(data),
 			};
 		} catch (err) {
+			console.log(err);
 			if (err instanceof EsError) {
 				throw new ElasticSearchError(err.name);
 			} else if (err instanceof ValidationError) {

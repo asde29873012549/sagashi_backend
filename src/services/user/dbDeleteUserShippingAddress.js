@@ -17,7 +17,6 @@ export default async function dbDeleteUserShippingAddress(req, res) {
 
 	const jwtUsername = res.locals.user;
 
-
 	try {
 		const result = await sequelize.transaction(async (t) => {
 			const addresses = await address.destroy(

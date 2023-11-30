@@ -12,6 +12,8 @@ import validator from "../../utils/elastic_search/validator.js";
 
 dotenv.config();
 
+const product_index = process.env.ES_PRODUCT_INDEX;
+
 export default async function dbGetUserListing(req) {
 	let result;
 
@@ -21,6 +23,7 @@ export default async function dbGetUserListing(req) {
 
 	const query_template = {
 		size: 5,
+		index: product_index,
 		query: {},
 		sort: [{ updated_at: "desc" }],
 	};
