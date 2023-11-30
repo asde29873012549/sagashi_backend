@@ -10,11 +10,14 @@ import hits_extractor from "../../utils/elastic_search/hits_extractor.js";
 
 dotenv.config();
 
+const designer_index = process.env.ES_DESIGNER_INDEX;
+
 export default async function dbGetSingleDesigner(req) {
 	let result;
 
 	const query_template = {
 		size: 1,
+		index: designer_index,
 		query: {},
 	};
 

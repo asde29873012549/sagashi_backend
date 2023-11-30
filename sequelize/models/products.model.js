@@ -72,13 +72,6 @@ const Products = (sequelize) =>
 					key: "id",
 				},
 			},
-			curation_id: {
-				type: DataTypes.INTEGER,
-				references: {
-					model: "Curations",
-					key: "id",
-				},
-			},
 		},
 		{
 			sequelize,

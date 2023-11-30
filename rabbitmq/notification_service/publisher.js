@@ -19,6 +19,7 @@ async function publish_notification(payload) {
 			"notification.follow",
 			"notification.uploadListing",
 			"notification.order",
+			"notification.message",
 		];
 
 		await Promise.all(

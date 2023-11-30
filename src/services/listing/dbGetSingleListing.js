@@ -7,10 +7,13 @@ import {
 import client from "../../../elastic_search/client.js";
 import hits_extractor from "../../utils/elastic_search/hits_extractor.js";
 
-export default async function dbGetListing(req) {
+const product_index = process.env.ES_PRODUCT_INDEX;
+
+export default async function dbGetSingleListing(req) {
 	let result;
 	const query_template = {
 		size: 1,
+		index: product_index,
 		query: {},
 	};
 
