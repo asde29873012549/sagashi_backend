@@ -8,15 +8,22 @@ dotenv.config();
 export default async function GetAllChatroom(req, res) {
 	const chatrooms = Model.Chatrooms;
 
+	const { tab } = req.query;
+
 	const jwtUsername = res.locals.user;
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
+			let whereClause = {};
+			if (!tab) {
+				whereClause = { [Op.or] : [{ seller_name: jwtUsername }, { buyer_name: jwtUsername }]};
+			} else {
+				whereClause[tab === "sell" ? "seller_name" : "buyer_name"] = jwtUsername;
+			}
+
 			const message = await chatrooms.findAll(
 				{
-					where: {
-						[Op.or]: [{ seller_name: jwtUsername }, { buyer_name: jwtUsername }],
-					},
+					where: whereClause
 				},
 				{ transaction: t },
 			);
