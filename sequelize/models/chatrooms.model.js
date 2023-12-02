@@ -36,6 +36,12 @@ const Chatrooms = (sequelize) =>
 			last_message: {
 				type: DataTypes.TEXT,
 			},
+			chatroom_avatar: {
+				type: DataTypes.TEXT,
+			},
+			link: {
+				type: DataTypes.STRING(255),
+			},
 		},
 		{
 			sequelize,
