@@ -17,6 +17,7 @@ export default async function dbGetMessage(req) {
 					where: {
 						chatroom_id,
 					},
+					order: [["created_at", "ASC"]],
 				},
 				{ transaction: t },
 			);

@@ -7,6 +7,7 @@ dotenv.config();
 
 export default async function GetAllChatroom(req, res) {
 	const chatrooms = Model.Chatrooms;
+	const messages = Model.Messages;
 
 	const { tab } = req.query;
 
@@ -16,14 +17,23 @@ export default async function GetAllChatroom(req, res) {
 		const result = await sequelize.transaction(async (t) => {
 			let whereClause = {};
 			if (!tab) {
-				whereClause = { [Op.or] : [{ seller_name: jwtUsername }, { buyer_name: jwtUsername }]};
+				whereClause = { [Op.or]: [{ seller_name: jwtUsername }, { buyer_name: jwtUsername }] };
 			} else {
 				whereClause[tab === "sell" ? "seller_name" : "buyer_name"] = jwtUsername;
 			}
 
 			const message = await chatrooms.findAll(
 				{
-					where: whereClause
+					attributes: {
+						exclude: ["created_at"],
+					},
+					where: whereClause,
+					include: {
+						model: messages,
+						as: "last_message_asssociation",
+						attributes: ["read_at", "text"],
+					},
+					order: [["updated_at", "DESC"]],
 				},
 				{ transaction: t },
 			);
@@ -31,8 +41,19 @@ export default async function GetAllChatroom(req, res) {
 			return message;
 		});
 
-		return result;
+		const transformedResult = result.map((item) => {
+			const { dataValues } = item;
+			const { last_message_asssociation, ...rest } = dataValues;
+			return {
+				...rest,
+				text: last_message_asssociation.text,
+				read_at: last_message_asssociation.read_at,
+			};
+		});
+
+		return transformedResult;
 	} catch (err) {
+		console.log(err);
 		if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);
 		}

@@ -7,10 +7,6 @@ const Chatrooms = (sequelize) =>
 			id: {
 				type: DataTypes.STRING(255),
 				primaryKey: true,
-				reference: {
-					model: "Messages",
-					key: "id",
-				},
 			},
 			seller_name: {
 				type: DataTypes.STRING(80),
@@ -34,7 +30,7 @@ const Chatrooms = (sequelize) =>
 				},
 			},
 			last_message: {
-				type: DataTypes.TEXT,
+				type: DataTypes.INTEGER,
 			},
 			chatroom_avatar: {
 				type: DataTypes.TEXT,
@@ -49,11 +45,12 @@ const Chatrooms = (sequelize) =>
 			schema: "sagashi",
 			freezeTableName: true,
 			timestamps: true,
-			updatedAt: true,
+			updatedAt: "updated_at",
+			createdAt: "created_at",
 			indexes: [
 				{
 					using: "BTREE",
-					fields: ["seller_name"],
+					fields: ["seller_name", "buyer_name"],
 				},
 			],
 		},

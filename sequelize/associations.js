@@ -3,6 +3,7 @@ import { DataTypes } from "sequelize";
 const applyAssociations = (sequelize) => {
 	const {
 		Categories,
+		Messages,
 		Chatrooms,
 		Curations,
 		Designers,
@@ -11,7 +12,6 @@ const applyAssociations = (sequelize) => {
 		FollowedDesigners,
 		Follows,
 		Likes,
-		Messages,
 		Notifications,
 		Offers,
 		Products,
@@ -73,8 +73,8 @@ const applyAssociations = (sequelize) => {
 	});
 
 	// Curations < Products => One-To-Many
-	//Curations.hasMany(Products);
-	//Products.belongsTo(Curations);
+	// Curations.hasMany(Products);
+	// Products.belongsTo(Curations);
 
 	// Users < Chatrooms => One-To-Many
 	Users.hasMany(Chatrooms, {
@@ -183,8 +183,26 @@ const applyAssociations = (sequelize) => {
 	});
 
 	// Chatrooms < Message One-To-Many
-	Chatrooms.hasMany(Messages);
-	Messages.belongsTo(Chatrooms);
+	Chatrooms.hasMany(Messages, {
+		foreignKey: {
+			name: "chatroom_id",
+		},
+	});
+	Messages.belongsTo(Chatrooms, {
+		foreignKey: {
+			name: "chatroom_id",
+		},
+	});
+
+	// Chatrooms - Messages One-To-One
+	Messages.hasOne(Chatrooms, {
+		as: "last_message_asssociation",
+		foreignKey: "last_message",
+	});
+	Chatrooms.belongsTo(Messages, {
+		as: "last_message_asssociation",
+		foreignKey: "last_message",
+	});
 
 	// Users < Notifications One-To-Many
 	Users.hasMany(Notifications, {
