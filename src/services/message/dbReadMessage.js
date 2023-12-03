@@ -9,7 +9,7 @@ dotenv.config();
 export default async function dbReadMessage(req, res) {
 	const messages = Model.Messages;
 
-	const { messagesRead } = req.body;
+	const { message_id } = req.body;
 
 	const jwtUsername = res.locals.user;
 
@@ -23,7 +23,7 @@ export default async function dbReadMessage(req, res) {
 				},
 				{
 					where: {
-						id: [...messagesRead],
+						id: message_id,
 					},
 				},
 				{ transaction: t },

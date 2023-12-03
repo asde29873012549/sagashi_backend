@@ -22,6 +22,7 @@ export default async function dbCreateMessage(req, res) {
 
 	if (isFirstMessage) {
 		try {
+			console.log("send message to new chatroom");
 			result = await sequelize.transaction(async (t) => {
 				await chatrooms.upsert(
 					{
@@ -29,7 +30,6 @@ export default async function dbCreateMessage(req, res) {
 						seller_name,
 						buyer_name,
 						last_sent_user_name: jwtUsername,
-						last_message: text,
 						chatroom_avatar: image,
 						link: `/user?dept=Messages&chatroom_id=${chatroom_id}`,
 					},
@@ -48,6 +48,19 @@ export default async function dbCreateMessage(req, res) {
 
 				return message;
 			});
+
+			if (!result.id) throw new SequelizeGenericError("message not created, id not found");
+
+			await chatrooms.update(
+				{
+					last_message: result.id,
+				},
+				{
+					where: {
+						id: result.chatroom_id,
+					},
+				},
+			);
 		} catch (err) {
 			if (err instanceof SequelizeGenericError) {
 				throw new DatabaseError(err.name);
@@ -56,31 +69,29 @@ export default async function dbCreateMessage(req, res) {
 		}
 	} else {
 		try {
-			result = await sequelize.transaction(async (t) => {
-				const message = await messages.create(
-					{
-						sender_name: jwtUsername,
-						chatroom_id,
-						text,
-						read_at: isRead ? formatDateTime() : null,
-					},
-					{ transaction: t },
-				);
-
-				const updatedRow = await chatrooms.update(
-					{
-						last_sent_user_name: jwtUsername,
-						last_message: text,
-					},
-					{
-						where: {
-							id: chatroom_id,
-						},
-					},
-				);
-
-				return [message, updatedRow];
+			console.log("send message to chatroom already created");
+			const message = await messages.create({
+				sender_name: jwtUsername,
+				chatroom_id,
+				text,
+				read_at: isRead ? formatDateTime() : null,
 			});
+
+			if (!message.id) throw new SequelizeGenericError("message not created, id not found");
+
+			const updatedRow = await chatrooms.update(
+				{
+					last_sent_user_name: jwtUsername,
+					last_message: message.id,
+				},
+				{
+					where: {
+						id: chatroom_id,
+					},
+				},
+			);
+
+			result = [message, updatedRow];
 		} catch (err) {
 			if (err instanceof SequelizeGenericError) {
 				throw new DatabaseError(err.name);

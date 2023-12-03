@@ -13,10 +13,6 @@ const Messages = (sequelize) =>
 			},
 			chatroom_id: {
 				type: DataTypes.STRING(255),
-				references: {
-					model: "Chatrooms",
-					key: "id",
-				},
 			},
 			text: {
 				type: DataTypes.TEXT,
@@ -33,6 +29,7 @@ const Messages = (sequelize) =>
 			freezeTableName: true,
 			timestamps: true,
 			updatedAt: false,
+			createdAt: "created_at",
 			indexes: [
 				{
 					using: "BTREE",
