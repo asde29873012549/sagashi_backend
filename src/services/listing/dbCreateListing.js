@@ -73,6 +73,9 @@ export default async function dbCreateListing(req, res) {
 
 	const products = Model.Products;
 	const products_to_be_sync = Model.Products_to_be_sync;
+	const notification = Model.Notifications;
+	const notificationReceiverMap = Model.NotificationReceiverMap;
+	const follows = Model.Follows;
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
@@ -120,6 +123,30 @@ export default async function dbCreateListing(req, res) {
 				},
 				{ transaction: t },
 			);
+
+			const followers = await follows.findAll({
+				attributes: ["follower_name"],
+				where: {
+					user_name: jwtUsername,
+				},
+			});
+
+			const notifications = await notification.create({
+				sender_name: jwtUsername,
+				type: "notification.uploadListing",
+				image: primary_image,
+				content: {
+					listing_name: item_name,
+				},
+				link: `/shop/${prod.dataValues.id}`,
+			});
+
+			const notificationReceiverMapCreateArray = followers.map((follower) => ({
+				notification_id: notifications.id,
+				username: follower.follower_name,
+			}));
+
+			await notificationReceiverMap.bulkCreate(notificationReceiverMapCreateArray);
 
 			return prod;
 		});

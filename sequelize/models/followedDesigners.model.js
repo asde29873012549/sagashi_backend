@@ -6,6 +6,7 @@ const FollowedDesigners = (sequelize) =>
 		{
 			user_name: {
 				type: DataTypes.STRING(80),
+				primaryKey: true,
 				references: {
 					model: "Users",
 					key: "username",
@@ -13,6 +14,7 @@ const FollowedDesigners = (sequelize) =>
 			},
 			designer_id: {
 				type: DataTypes.INTEGER,
+				primaryKey: true,
 				references: {
 					model: "Designers",
 					key: "id",

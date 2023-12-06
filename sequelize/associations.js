@@ -22,35 +22,44 @@ const applyAssociations = (sequelize) => {
 		Users,
 		SizesCategoriesMap,
 		ProductsCurationsMap,
+		NotificationReceiverMap,
 	} = sequelize.models;
 
-	// Users < Products => One-To-Many
-	Users.hasMany(Products, {
+	// Notifications <> Users => Many-To-Many through NotificationReceiverMap
+	Notifications.hasMany(NotificationReceiverMap, {
 		foreignKey: {
-			name: "seller_name",
+			name: "notification_id",
 		},
 	});
-	Products.belongsTo(Users, {
+	Users.hasMany(NotificationReceiverMap, {
 		foreignKey: {
-			name: "seller_name",
+			name: "username",
 		},
+	});
+	NotificationReceiverMap.belongsTo(Notifications, {
+		foreignKey: {
+			name: "notification_id",
+		},
+	});
+	NotificationReceiverMap.belongsTo(Users, {
+		foreignKey: {
+			name: "username",
+		},
+	});
+	Notifications.belongsToMany(Users, {
+		as: "notification_receivers",
+		through: NotificationReceiverMap,
+		foreignKey: "notification_id",
+		otherKey: "username",
+	});
+	Users.belongsToMany(Notifications, {
+		as: "notification_receivers",
+		through: NotificationReceiverMap,
+		foreignKey: "username",
+		otherKey: "notification_id",
 	});
 
 	// Categories <> Sizes => Many-To-Many through SizesCategoriesMap
-	Categories.belongsToMany(Sizes, {
-		through: {
-			model: SizesCategoriesMap,
-		},
-		foreignKey: "category_id",
-		otherKey: "size_id",
-	});
-	Sizes.belongsToMany(Categories, {
-		through: {
-			model: SizesCategoriesMap,
-		},
-		foreignKey: "size_id",
-		otherKey: "category_id",
-	});
 	Categories.hasMany(SizesCategoriesMap, {
 		foreignKey: {
 			name: "category_id",
@@ -71,46 +80,220 @@ const applyAssociations = (sequelize) => {
 			name: "size_id",
 		},
 	});
-
-	// Curations < Products => One-To-Many
-	// Curations.hasMany(Products);
-	// Products.belongsTo(Curations);
-
-	// Users < Chatrooms => One-To-Many
-	Users.hasMany(Chatrooms, {
-		foreignKey: {
-			name: "last_sent_user_name",
-		},
+	Categories.belongsToMany(Sizes, {
+		through: SizesCategoriesMap,
+		foreignKey: "category_id",
+		otherKey: "size_id",
 	});
-	Users.hasMany(Chatrooms, {
-		foreignKey: {
-			name: "seller_name",
-		},
-	});
-	Users.hasMany(Chatrooms, {
-		foreignKey: {
-			name: "buyer_name",
-		},
-	});
-	Chatrooms.belongsTo(Users, {
-		foreignKey: {
-			name: "last_sent_user_name",
-		},
-	});
-	Chatrooms.belongsTo(Users, {
-		foreignKey: {
-			name: "seller_name",
-		},
-	});
-	Chatrooms.belongsTo(Users, {
-		foreignKey: {
-			name: "buyer_name",
-		},
+	Sizes.belongsToMany(Categories, {
+		through: SizesCategoriesMap,
+		foreignKey: "size_id",
+		otherKey: "category_id",
 	});
 
-	// Designers - FeaturedDesingers One-To-One
-	Designers.hasOne(FeaturedDesigners);
-	FeaturedDesigners.belongsTo(Designers);
+	// Users <> Designers Many-To-Many through FollowedDesigners
+	Users.hasMany(FollowedDesigners, {
+		as: "userFollowedDesigners",
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Designers.hasMany(FollowedDesigners, {
+		as: "designersBeingFollowedUsers",
+		foreignKey: {
+			name: "designer_id",
+		},
+	});
+	FollowedDesigners.belongsTo(Users, {
+		as: "userFollowedDesigners",
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	FollowedDesigners.belongsTo(Designers, {
+		as: "designersBeingFollowedUsers",
+		foreignKey: {
+			name: "designer_id",
+		},
+	});
+	Users.belongsToMany(Designers, {
+		through: FollowedDesigners,
+		foreignKey: "user_name",
+		otherKey: "designer_id",
+	});
+	Designers.belongsToMany(Users, {
+		through: FollowedDesigners,
+		foreignKey: "designer_id",
+		otherKey: "user_name",
+	});
+
+	// Products <> Curations Many-To-Many through ProductsCurationsMap
+	Products.hasMany(ProductsCurationsMap, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	Curations.hasMany(ProductsCurationsMap, {
+		foreignKey: {
+			name: "curation_id",
+		},
+	});
+	ProductsCurationsMap.belongsTo(Products, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	ProductsCurationsMap.belongsTo(Curations, {
+		foreignKey: {
+			name: "curation_id",
+		},
+	});
+	Products.belongsToMany(Curations, {
+		through: ProductsCurationsMap,
+		foreignKey: "product_id",
+		otherKey: "curation_id",
+	});
+	Curations.belongsToMany(Products, {
+		through: ProductsCurationsMap,
+		foreignKey: "curation_id",
+		otherKey: "product_id",
+	});
+
+	// Users <> Products Many-To-Many through Offers
+	Users.hasMany(Offers, {
+		as: "userOffers",
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Products.hasMany(Offers, {
+		as: "productOffers",
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	Offers.belongsTo(Users, {
+		as: "userOffers",
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Offers.belongsTo(Products, {
+		as: "productOffers",
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	Users.belongsToMany(Products, {
+		through: Offers,
+		foreignKey: "user_name",
+		otherKey: "product_id",
+	});
+	Products.belongsToMany(Users, {
+		through: Offers,
+		foreignKey: "product_id",
+		otherKey: "user_name",
+	});
+
+	// Users <> Products Many-To-Many through RecentlyViewed
+	Users.hasMany(RecentlyViewed, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Products.hasMany(RecentlyViewed, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	RecentlyViewed.belongsTo(Users, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	RecentlyViewed.belongsTo(Products, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	Users.belongsToMany(Products, {
+		through: RecentlyViewed,
+		foreignKey: "user_name",
+		otherKey: "product_id",
+	});
+	Products.belongsToMany(Users, {
+		through: RecentlyViewed,
+		foreignKey: "product_id",
+		otherKey: "user_name",
+	});
+
+	// Users <> Products Many-To-Many through ShoppingCart
+	Users.hasMany(ShoppingCart, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Products.hasMany(ShoppingCart, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	ShoppingCart.belongsTo(Users, {
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	ShoppingCart.belongsTo(Products, {
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	Users.belongsToMany(Products, {
+		through: ShoppingCart,
+		foreignKey: "user_name",
+		otherKey: "product_id",
+	});
+	Products.belongsToMany(Users, {
+		through: ShoppingCart,
+		foreignKey: "product_id",
+		otherKey: "user_name",
+	});
+
+	// Users <> Products Many-To-Many through Likes
+	Users.hasMany(Likes, {
+		as: "userLikedProducts",
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Products.hasMany(Likes, {
+		as: "LikesProducts",
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	Likes.belongsTo(Users, {
+		as: "userLikedProducts",
+		foreignKey: {
+			name: "user_name",
+		},
+	});
+	Likes.belongsTo(Products, {
+		as: "LikesProducts",
+		foreignKey: {
+			name: "product_id",
+		},
+	});
+	Users.belongsToMany(Products, {
+		through: Likes,
+		foreignKey: "user_name",
+		otherKey: "product_id",
+	});
+	Products.belongsToMany(Users, {
+		through: Likes,
+		foreignKey: "product_id",
+		otherKey: "user_name",
+	});
 
 	// Users < Follows One-To-Many
 	Users.hasMany(Follows, {
@@ -134,133 +317,33 @@ const applyAssociations = (sequelize) => {
 		},
 	});
 
-	// Users <> Products Many-To-Many through Likes
-	Users.belongsToMany(Products, {
-		through: {
-			model: Likes,
-		},
-		foreignKey: "user_name",
-		otherKey: "product_id",
-	});
-	Products.belongsToMany(Users, {
-		through: {
-			model: Likes,
-		},
-		foreignKey: "product_id",
-		otherKey: "user_name",
-	});
-	Users.hasMany(Likes, {
+	// Users < Address One-To-Many
+	Users.hasMany(Address, {
 		foreignKey: {
 			name: "user_name",
 		},
 	});
-	Products.hasMany(Likes, {
-		foreignKey: {
-			name: "product_id",
-		},
-	});
-	Likes.belongsTo(Users, {
+	Address.belongsTo(Users, {
 		foreignKey: {
 			name: "user_name",
 		},
 	});
-	Likes.belongsTo(Products, {
-		foreignKey: {
-			name: "product_id",
-		},
-	});
 
-	// Users < Messages One-To-Many
-	Users.hasMany(Messages, {
-		foreignKey: {
-			name: "sender_name",
-		},
-	});
-	Messages.belongsTo(Users, {
-		foreignKey: {
-			name: "sender_name",
-		},
-	});
+	// Designers - FeaturedDesingers One-To-One
+	Designers.hasOne(FeaturedDesigners);
+	FeaturedDesigners.belongsTo(Designers);
 
-	// Chatrooms < Message One-To-Many
-	Chatrooms.hasMany(Messages, {
-		foreignKey: {
-			name: "chatroom_id",
-		},
-	});
-	Messages.belongsTo(Chatrooms, {
-		foreignKey: {
-			name: "chatroom_id",
-		},
-	});
+	// Designers < Products One-To-Many
+	Designers.hasMany(Products);
+	Products.belongsTo(Designers);
 
-	// Chatrooms - Messages One-To-One
-	Messages.hasOne(Chatrooms, {
-		as: "last_message_asssociation",
-		foreignKey: "last_message",
-	});
-	Chatrooms.belongsTo(Messages, {
-		as: "last_message_asssociation",
-		foreignKey: "last_message",
-	});
+	// Sizes < Products One-To-Many
+	Sizes.hasMany(Products);
+	Products.belongsTo(Sizes);
 
-	// Users < Notifications One-To-Many
-	Users.hasMany(Notifications, {
-		foreignKey: {
-			name: "receiver_name",
-		},
-	});
-	Users.hasMany(Notifications, {
-		foreignKey: {
-			name: "sender_name",
-		},
-	});
-	Notifications.belongsTo(Users, {
-		foreignKey: {
-			name: "receiver_name",
-		},
-	});
-	Notifications.belongsTo(Users, {
-		foreignKey: {
-			name: "sender_name",
-		},
-	});
-
-	// Users <> Products Many-To-Many through Offers
-	Users.belongsToMany(Products, {
-		through: {
-			model: Offers,
-		},
-		foreignKey: "user_name",
-		otherKey: "product_id",
-	});
-	Products.belongsToMany(Users, {
-		through: {
-			model: Offers,
-		},
-		foreignKey: "product_id",
-		otherKey: "user_name",
-	});
-	Users.hasMany(Offers, {
-		foreignKey: {
-			name: "user_name",
-		},
-	});
-	Products.hasMany(Offers, {
-		foreignKey: {
-			name: "product_id",
-		},
-	});
-	Offers.belongsTo(Users, {
-		foreignKey: {
-			name: "user_name",
-		},
-	});
-	Offers.belongsTo(Products, {
-		foreignKey: {
-			name: "product_id",
-		},
-	});
+	// Discounts < Products One-To-Many
+	Discounts.hasMany(Products);
+	Products.belongsTo(Discounts);
 
 	// Categories < Products One-To-Many
 	Categories.hasMany(Products, {
@@ -278,172 +361,104 @@ const applyAssociations = (sequelize) => {
 		},
 	});
 
-	// Designers < Products One-To-Many
-	Designers.hasMany(Products);
-	Products.belongsTo(Designers);
-
-	// Sizes < Products One-To-Many
-	Sizes.hasMany(Products);
-	Products.belongsTo(Sizes);
-
-	// Discounts < Products One-To-Many
-	Discounts.hasMany(Products);
-	Products.belongsTo(Discounts);
-
-	// Users <> Products Many-To-Many through RecentlyViewed
-	Users.belongsToMany(Products, {
-		through: {
-			model: RecentlyViewed,
-		},
-		foreignKey: "user_name",
-		otherKey: "product_id",
-	});
-	Products.belongsToMany(Users, {
-		through: {
-			model: RecentlyViewed,
-		},
-		foreignKey: "product_id",
-		otherKey: "user_name",
-	});
-	Users.hasMany(RecentlyViewed, {
+	// Users < Products => One-To-Many
+	Users.hasMany(Products, {
 		foreignKey: {
-			name: "user_name",
+			name: "seller_name",
 		},
 	});
-	Products.hasMany(RecentlyViewed, {
+	Products.belongsTo(Users, {
 		foreignKey: {
-			name: "product_id",
-		},
-	});
-	RecentlyViewed.belongsTo(Users, {
-		foreignKey: {
-			name: "user_name",
-		},
-	});
-	RecentlyViewed.belongsTo(Products, {
-		foreignKey: {
-			name: "product_id",
+			name: "seller_name",
 		},
 	});
 
-	// Users <> Designers Many-To-Many through FollowedDesigners
-	Users.belongsToMany(Designers, {
-		through: {
-			model: FollowedDesigners,
-		},
-		foreignKey: "user_name",
-		otherKey: "designer_id",
-	});
-	Designers.belongsToMany(Users, {
-		through: {
-			model: FollowedDesigners,
-		},
-		foreignKey: "designer_id",
-		otherKey: "user_name",
-	});
-	Users.hasMany(FollowedDesigners, {
+	// Users < Notifications One-To-Many
+	Users.hasMany(Notifications, {
 		foreignKey: {
-			name: "user_name",
+			name: "sender_name",
 		},
 	});
-	Designers.hasMany(FollowedDesigners, {
+	Notifications.belongsTo(Users, {
 		foreignKey: {
-			name: "designer_id",
-		},
-	});
-	FollowedDesigners.belongsTo(Users, {
-		foreignKey: {
-			name: "user_name",
-		},
-	});
-	FollowedDesigners.belongsTo(Designers, {
-		foreignKey: {
-			name: "designer_id",
+			name: "sender_name",
 		},
 	});
 
-	// Users <> Products Many-To-Many through ShoppingCart
-	Users.belongsToMany(Products, {
-		through: {
-			model: ShoppingCart,
-		},
-		foreignKey: "user_name",
-		otherKey: "product_id",
-	});
-	Products.belongsToMany(Users, {
-		through: {
-			model: ShoppingCart,
-		},
-		foreignKey: "product_id",
-		otherKey: "user_name",
-	});
-	Users.hasMany(ShoppingCart, {
+	// Users < Chatrooms => One-To-Many
+	Users.hasMany(Chatrooms, {
+		as: "last_sent_user",
 		foreignKey: {
-			name: "user_name",
+			name: "last_sent_user_name",
 		},
 	});
-	Products.hasMany(ShoppingCart, {
+	Users.hasMany(Chatrooms, {
+		as: "seller",
 		foreignKey: {
-			name: "product_id",
+			name: "seller_name",
 		},
 	});
-	ShoppingCart.belongsTo(Users, {
+	Users.hasMany(Chatrooms, {
+		as: "buyer",
 		foreignKey: {
-			name: "user_name",
+			name: "buyer_name",
 		},
 	});
-	ShoppingCart.belongsTo(Products, {
+	Chatrooms.belongsTo(Users, {
+		as: "last_sent_user",
 		foreignKey: {
-			name: "product_id",
+			name: "last_sent_user_name",
+		},
+	});
+	Chatrooms.belongsTo(Users, {
+		as: "seller",
+		foreignKey: {
+			name: "seller_name",
+		},
+	});
+	Chatrooms.belongsTo(Users, {
+		as: "buyer",
+		foreignKey: {
+			name: "buyer_name",
 		},
 	});
 
-	// Users < Address One-To-Many
-	Users.hasMany(Address, {
+	// Users < Messages One-To-Many
+	Users.hasMany(Messages, {
 		foreignKey: {
-			name: "user_name",
+			name: "sender_name",
 		},
 	});
-	Address.belongsTo(Users, {
+	Messages.belongsTo(Users, {
 		foreignKey: {
-			name: "user_name",
+			name: "sender_name",
 		},
 	});
 
-	// Products <> Curations Many-To-Many through ProductsCurationsMap
-	Products.belongsToMany(Curations, {
-		through: {
-			model: ProductsCurationsMap,
-		},
-		foreignKey: "product_id",
-		otherKey: "curation_id",
-	});
-	Curations.belongsToMany(Products, {
-		through: {
-			model: ProductsCurationsMap,
-		},
-		foreignKey: "curation_id",
-		otherKey: "product_id",
-	});
-	Products.hasMany(ProductsCurationsMap, {
+	// Chatrooms < Message One-To-Many
+	Chatrooms.hasMany(Messages, {
+		as: "chatroomMessages",
 		foreignKey: {
-			name: "product_id",
+			name: "chatroom_id",
 		},
 	});
-	Curations.hasMany(ProductsCurationsMap, {
+	Messages.belongsTo(Chatrooms, {
+		as: "chatroomMessages",
 		foreignKey: {
-			name: "curation_id",
+			name: "chatroom_id",
 		},
 	});
-	ProductsCurationsMap.belongsTo(Products, {
-		foreignKey: {
-			name: "product_id",
-		},
-	});
-	ProductsCurationsMap.belongsTo(Curations, {
-		foreignKey: {
-			name: "curation_id",
-		},
+
+	// Chatrooms - Messages One-To-One
+	/* Messages.hasOne(Chatrooms, {
+		as: "last_message_asssociation",
+		foreignKey: "last_message",
+		constraints: false,
+	}); */
+	Chatrooms.belongsTo(Messages, {
+		as: "last_message_asssociation",
+		foreignKey: "last_message",
+		constraints: false,
 	});
 };
 

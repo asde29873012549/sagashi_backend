@@ -6,6 +6,7 @@ const SizesCategoriesMap = (sequelize) =>
 		{
 			size_id: {
 				type: DataTypes.INTEGER,
+				primaryKey: true,
 				references: {
 					model: "Sizes",
 					key: "id",
@@ -13,6 +14,7 @@ const SizesCategoriesMap = (sequelize) =>
 			},
 			category_id: {
 				type: DataTypes.INTEGER,
+				primaryKey: true,
 				references: {
 					model: "Categories",
 					key: "start",

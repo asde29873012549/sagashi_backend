@@ -8,7 +8,7 @@ dotenv.config();
 export default async function dbGetListingLikeCount(req) {
 	const likes = Model.Likes;
 
-	const { listing_id } = req.query;
+	const { listing_id } = req.params;
 
 	const numeric_listing_id = Number(listing_id);
 	if (Number.isNaN(numeric_listing_id)) {

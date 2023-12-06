@@ -9,6 +9,6 @@ router.get("/featured", designerController.getFeaturedDesigners);
 router.get("/popular", designerController.getPopularDesigners);
 router.get("/relatedDesigners", designerController.getRelatedDesigners);
 router.get("/:designer_id", designerController.getSingleDesigner);
-router.post("/:designer_id", tokenAuthentication, designerController.followDesigner);
+router.post("/", tokenAuthentication, designerController.followDesigner);
 
 export default router;

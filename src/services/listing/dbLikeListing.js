@@ -10,7 +10,8 @@ dotenv.config();
 
 export default async function dbLikeListing(req, res) {
 	const likes = Model.Likes;
-	let isCreateLike = false;
+	const notification = Model.Notifications;
+	const notificationReceiverMap = Model.NotificationReceiverMap;
 
 	const { listing_id, listing_name, seller_name, listing_image } = req.body;
 
@@ -28,34 +29,49 @@ export default async function dbLikeListing(req, res) {
 				{ transaction: t },
 			);
 
-			if (rows_deleted === 0) {
-				const created = await likes.create(
-					{
-						user_name: jwtUsername,
-						product_id: listing_id,
-					},
-					{ transaction: t },
-				);
+			if (rows_deleted !== 0) return rows_deleted;
 
-				isCreateLike = true;
+			await likes.create(
+				{
+					user_name: jwtUsername,
+					product_id: listing_id,
+				},
+				{ transaction: t },
+			);
 
-				return created;
-			}
-
-			return rows_deleted;
-		});
-
-		if (isCreateLike)
-			await publish_notification({
+			const notifications = await notification.create({
+				sender_name: jwtUsername,
 				type: "notification.like",
-				username: jwtUsername,
-				seller_name,
-				listing_id,
-				listing_name,
 				image: listing_image,
-				created_at: getNowISODate(),
+				content: {
+					listing_name,
+				},
 				link: `/shop/${listing_id}`,
 			});
+
+			await notificationReceiverMap.create(
+				{
+					notification_id: notifications.id,
+					username: seller_name,
+				},
+				{ transaction: t },
+			);
+
+			if (notifications) {
+				await publish_notification({
+					type: "notification.like",
+					username: jwtUsername,
+					seller_name,
+					listing_id,
+					listing_name,
+					image: listing_image,
+					created_at: getNowISODate(),
+					link: `/shop/${listing_id}`,
+				});
+			}
+
+			return notifications;
+		});
 
 		return result;
 	} catch (err) {
