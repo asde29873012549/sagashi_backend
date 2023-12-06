@@ -55,7 +55,7 @@ export default async function dbGuideKeyword(req) {
 			},
 		},
 		highlight: {
-			pre_tags: ["<strong style='color: #0C4A6E'>"],
+			pre_tags: ["<strong style='color: #155E75'>"],
 			post_tags: ["</strong>"],
 			fields: {
 				name: {},

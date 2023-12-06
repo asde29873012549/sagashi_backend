@@ -11,15 +11,15 @@ const Notifications = (sequelize) =>
 					key: "username",
 				},
 			},
-			receiver_name: {
+			/* receiver_name: {
 				type: DataTypes.STRING(80),
 				references: {
 					model: "Users",
 					key: "username",
 				},
-			},
+			}, */
 			type: {
-				type: DataTypes.STRING(20),
+				type: DataTypes.STRING(30),
 				allowNull: false,
 			},
 			image: {
@@ -48,12 +48,12 @@ const Notifications = (sequelize) =>
 			timestamps: true,
 			updatedAt: false,
 			createdAt: "created_at",
-			indexes: [
+			/* indexes: [
 				{
 					using: "BTREE",
 					fields: ["receiver_name"],
 				},
-			],
+			], */
 		},
 	);
 

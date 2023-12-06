@@ -5,7 +5,7 @@ const FeaturedDesigners = (sequelize) =>
 		"FeaturedDesigners",
 		{
 			designer_id: {
-				type: DataTypes.STRING(40),
+				type: DataTypes.INTEGER,
 				references: {
 					model: "Designers",
 					key: "id",

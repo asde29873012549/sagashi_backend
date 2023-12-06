@@ -7,6 +7,7 @@ dotenv.config();
 
 export default async function dbGetNotification(req, res) {
 	const notification = Model.Notifications;
+	const notificationReceiverMap = Model.NotificationReceiverMap;
 
 	const { cursor } = req.params;
 
@@ -14,7 +15,11 @@ export default async function dbGetNotification(req, res) {
 
 	const sqlObj = {
 		where: {
-			receiver_name: jwtUsername,
+			username: jwtUsername,
+		},
+		include: {
+			model: notification,
+			required: true,
 		},
 		order: [["created_at", "desc"]],
 		limit: 10,
@@ -24,13 +29,18 @@ export default async function dbGetNotification(req, res) {
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const notifications = await notification.findAll(sqlObj, { transaction: t });
+			const notifications = await notificationReceiverMap.findAll(sqlObj, { transaction: t });
 
 			return notifications;
 		});
 
-		return result;
+		if (!result) throw new DatabaseError();
+
+		const formattedResult = result.map((noti) => noti.Notification);
+
+		return formattedResult;
 	} catch (err) {
+		console.log(err);
 		if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);
 		}

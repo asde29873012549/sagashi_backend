@@ -43,6 +43,12 @@ const Users = (sequelize) =>
 			underscored: true,
 			freezeTableName: true,
 			schema: "sagashi",
+			index: [
+				{
+					using: "BTREE",
+					fields: ["username"],
+				},
+			],
 		},
 	);
 

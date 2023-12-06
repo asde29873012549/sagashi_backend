@@ -1,23 +1,23 @@
 import { DataTypes } from "sequelize";
 
-const ProductsCurationsMap = (sequelize) =>
+const NotificationReceiverMap = (sequelize) =>
 	sequelize.define(
-		"ProductsCurationsMap",
+		"NotificationReceiverMap",
 		{
-			product_id: {
+			notification_id: {
 				type: DataTypes.INTEGER,
 				primaryKey: true,
 				references: {
-					model: "Products",
+					model: "Notifications",
 					key: "id",
 				},
 			},
-			curation_id: {
-				type: DataTypes.INTEGER,
+			username: {
+				type: DataTypes.STRING(80),
 				primaryKey: true,
 				references: {
-					model: "Curations",
-					key: "id",
+					model: "Users",
+					key: "username",
 				},
 			},
 		},
@@ -26,15 +26,15 @@ const ProductsCurationsMap = (sequelize) =>
 			underscored: true,
 			schema: "sagashi",
 			freezeTableName: true,
-			timestamps: true,
+			timestamps: "created_at",
 			updatedAt: false,
 			indexes: [
 				{
 					using: "BTREE",
-					fields: ["curation_id", "product_id"],
+					fields: ["username"],
 				},
 			],
 		},
 	);
 
-export default ProductsCurationsMap;
+export default NotificationReceiverMap;

@@ -14,6 +14,7 @@ export default async function dbGetUserLikeListing(req, res) {
 		const result = await sequelize.transaction(async (t) => {
 			const liked_listing = await likes.findAll(
 				{
+					attributes: ["product_id"],
 					where: {
 						user_name: jwtUsername,
 					},

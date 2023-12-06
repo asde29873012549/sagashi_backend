@@ -14,6 +14,7 @@ export default async function dbGetMessage(req) {
 		const result = await sequelize.transaction(async (t) => {
 			const message = await messages.findAll(
 				{
+					attributes: ["sender_name", "text", "created_at"],
 					where: {
 						chatroom_id,
 					},
