@@ -3,6 +3,8 @@ import sequelize, { Model } from "../../../sequelize/index.js";
 import createFile from "../../utils/gcp/cloudStorage.js";
 import colorData from "../../data/color.js";
 import conditionData from "../../data/condition.js";
+import publish_notification from "../../../rabbitmq/notification_service/publisher.js";
+import { getNowISODate } from "../../utils/date.js";
 import {
 	DatabaseError,
 	StorageError,
@@ -150,6 +152,17 @@ export default async function dbCreateListing(req, res) {
 
 			return prod;
 		});
+
+		if (result) {
+			await publish_notification({
+				type: "notification.uploadListing",
+				username: jwtUsername,
+				listing_name: item_name,
+				image: primary_image,
+				created_at: getNowISODate(),
+				link: `/shop/${result.id}`,
+			});
+		}
 
 		return result;
 	} catch (err) {
