@@ -10,12 +10,12 @@ export default async function dbGetShoppinCart(req, res) {
 	const shoppingCart = Model.ShoppingCart;
 	const sizes = Model.Sizes;
 	const discounts = Model.Discounts;
+	const designers = Model.Designers;
 	const offers = Model.Offers;
 
-	const paramsUsername = req.params.username;
 	const jwtUsername = res.locals.user;
 
-	if (paramsUsername !== jwtUsername) throw new ForbiddenError();
+	if (!jwtUsername) throw new ForbiddenError();
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
@@ -24,9 +24,16 @@ export default async function dbGetShoppinCart(req, res) {
 					where: {
 						user_name: jwtUsername,
 					},
+					attributes: ["product_id", "created_at"],
 					include: [
 						{
-							attributes: ["id", "seller_name", "name", "price", "desc", "primary_image"],
+							attributes: [
+								"seller_name",
+								["name", "product_name"],
+								"price",
+								"desc",
+								"primary_image",
+							],
 							model: products,
 							require: true,
 							include: [
@@ -40,6 +47,20 @@ export default async function dbGetShoppinCart(req, res) {
 									require: true,
 									attributes: ["percent"],
 								},
+								{
+									model: designers,
+									require: true,
+									attributes: ["name"],
+								},
+								/* {
+									model: offers,
+									require: true,
+									attributes: ["offer_price"],
+									where: {
+										user_name: jwtUsername,
+										active: "1",
+									},
+								} */
 							],
 						},
 					],
@@ -47,7 +68,7 @@ export default async function dbGetShoppinCart(req, res) {
 				{ transaction: t },
 			);
 
-			const offer = await offers.findAll(
+			/* const offer = await offers.findAll(
 				{
 					attributes: ["product_id", "offer_price"],
 					where: {
@@ -59,12 +80,16 @@ export default async function dbGetShoppinCart(req, res) {
 					},
 				},
 				{ transaction: t },
-			);
+			); */
 
-			return { shoppingCartItems, offer };
+			return shoppingCartItems;
 		});
 
-		return result;
+		return result.map((obj) => ({
+			product_id: obj.product_id,
+			created_at: obj.dataValues.created_at,
+			...obj.Product.dataValues,
+		}));
 	} catch (err) {
 		console.log(err);
 		if (err instanceof ForbiddenError) {

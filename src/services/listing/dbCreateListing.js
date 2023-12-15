@@ -79,6 +79,8 @@ export default async function dbCreateListing(req, res) {
 	const notificationReceiverMap = Model.NotificationReceiverMap;
 	const follows = Model.Follows;
 
+	let id = null;
+
 	try {
 		const result = await sequelize.transaction(async (t) => {
 			const prod = await products.create(
@@ -143,8 +145,10 @@ export default async function dbCreateListing(req, res) {
 				link: `/shop/${prod.dataValues.id}`,
 			});
 
+			if (notifications) id = notifications.id;
+
 			const notificationReceiverMapCreateArray = followers.map((follower) => ({
-				notification_id: notifications.id,
+				notification_id: id,
 				username: follower.follower_name,
 			}));
 
@@ -155,6 +159,7 @@ export default async function dbCreateListing(req, res) {
 
 		if (result) {
 			await publish_notification({
+				id,
 				type: "notification.uploadListing",
 				username: jwtUsername,
 				listing_name: item_name,

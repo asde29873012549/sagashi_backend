@@ -64,6 +64,7 @@ export default async function dbGetTree(req) {
 
 		return tree;
 	} catch (err) {
+		console.log(err);
 		if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);
 		}

@@ -13,6 +13,8 @@ export default async function dbLikeListing(req, res) {
 	const notification = Model.Notifications;
 	const notificationReceiverMap = Model.NotificationReceiverMap;
 
+	let id = null;
+
 	const { listing_id, listing_name, seller_name, listing_image } = req.body;
 
 	const jwtUsername = res.locals.user;
@@ -49,9 +51,11 @@ export default async function dbLikeListing(req, res) {
 				link: `/shop/${listing_id}`,
 			});
 
+			if (notifications) id = notifications.id;
+
 			await notificationReceiverMap.create(
 				{
-					notification_id: notifications.id,
+					notification_id: id,
 					username: seller_name,
 				},
 				{ transaction: t },
@@ -59,6 +63,7 @@ export default async function dbLikeListing(req, res) {
 
 			if (notifications) {
 				await publish_notification({
+					id,
 					type: "notification.like",
 					username: jwtUsername,
 					seller_name,

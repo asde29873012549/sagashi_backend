@@ -12,7 +12,7 @@ export default async function dbCreateMessage(req, res) {
 	const messages = Model.Messages;
 	const chatrooms = Model.Chatrooms;
 
-	const { product_id, seller_name, buyer_name, isFirstMessage, image, text, isRead } = req.body;
+	const { product_id, seller_name, buyer_name, image, text, isRead } = req.body;
 
 	const jwtUsername = res.locals.user;
 
@@ -20,66 +20,20 @@ export default async function dbCreateMessage(req, res) {
 
 	let result;
 
-	if (isFirstMessage) {
-		try {
-			console.log("send message to new chatroom");
-			result = await sequelize.transaction(async (t) => {
-				await chatrooms.upsert(
-					{
-						id: chatroom_id,
-						seller_name,
-						buyer_name,
-						last_sent_user_name: jwtUsername,
-						chatroom_avatar: image,
-						link: `/user?dept=Messages&chatroom_id=${chatroom_id}`,
-					},
-					{ transaction: t },
-				);
-
-				const message = await messages.create(
-					{
-						sender_name: jwtUsername,
-						chatroom_id,
-						text,
-						read_at: isRead ? formatDateTime() : null,
-					},
-					{ transaction: t },
-				);
-
-				return message;
-			});
-
-			if (!result.id) throw new SequelizeGenericError("message not created, id not found");
+	try {
+		// optimistically create message
+		result = await sequelize.transaction(async (t) => {
+			const message = await messages.create(
+				{
+					sender_name: jwtUsername,
+					chatroom_id,
+					text,
+					read_at: isRead ? formatDateTime() : null,
+				},
+				{ transaction: t },
+			);
 
 			await chatrooms.update(
-				{
-					last_message: result.id,
-				},
-				{
-					where: {
-						id: result.chatroom_id,
-					},
-				},
-			);
-		} catch (err) {
-			if (err instanceof SequelizeGenericError) {
-				throw new DatabaseError(err.name);
-			}
-			throw new UnknownError();
-		}
-	} else {
-		try {
-			console.log("send message to chatroom already created");
-			const message = await messages.create({
-				sender_name: jwtUsername,
-				chatroom_id,
-				text,
-				read_at: isRead ? formatDateTime() : null,
-			});
-
-			if (!message.id) throw new SequelizeGenericError("message not created, id not found");
-
-			const updatedRow = await chatrooms.update(
 				{
 					last_sent_user_name: jwtUsername,
 					last_message: message.id,
@@ -88,11 +42,63 @@ export default async function dbCreateMessage(req, res) {
 					where: {
 						id: chatroom_id,
 					},
+					transaction: t,
 				},
 			);
 
-			result = [message, updatedRow];
-		} catch (err) {
+			result = message;
+		});
+	} catch (err) {
+		// if error was caused by unexisted chatroom, create chatroom and message
+		if (
+			err.name === "SequelizeForeignKeyConstraintError" &&
+			err.parent.constraint === "Messages_chatroom_id_fkey"
+		) {
+			try {
+				result = await sequelize.transaction(async (t) => {
+					await chatrooms.upsert(
+						{
+							id: chatroom_id,
+							seller_name,
+							buyer_name,
+							last_sent_user_name: jwtUsername,
+							chatroom_avatar: image,
+							link: `/user?dept=Messages&chatroom_id=${chatroom_id}`,
+						},
+						{ transaction: t },
+					);
+
+					const message = await messages.create(
+						{
+							sender_name: jwtUsername,
+							chatroom_id,
+							text,
+							read_at: isRead ? formatDateTime() : null,
+						},
+						{ transaction: t },
+					);
+
+					return message;
+				});
+
+				await chatrooms.update(
+					{
+						last_message: result.dataValues.id,
+					},
+					{
+						where: {
+							id: result.dataValues.chatroom_id,
+						},
+					},
+				);
+			} catch (createMessageError) {
+				if (createMessageError instanceof SequelizeGenericError) {
+					throw new DatabaseError(createMessageError.name);
+				}
+				throw new UnknownError();
+			}
+		} else {
+			// if error was caused by other reasons, throw error
 			if (err instanceof SequelizeGenericError) {
 				throw new DatabaseError(err.name);
 			}

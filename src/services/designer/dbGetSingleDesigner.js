@@ -28,6 +28,7 @@ export default async function dbGetSingleDesigner(req) {
 
 	const es_query = query_template;
 	es_query.query.term = { designer_id: num_id };
+
 	try {
 		// get one listing from elastic search with id
 		const data = await client.search(es_query);
