@@ -4,6 +4,7 @@ import dbFollowDesigner from "../services/designer/dbFollowDesigner.js";
 import dbGetFeaturedDesigners from "../services/designer/dbGetFeaturedDesigners.js";
 import dbGetRelatedDesigners from "../services/designer/dbGetRelatedDesigners.js";
 import dbGetPopularDesigners from "../services/designer/dbGetPopularDesigners.js";
+import dbGetIsFollowDesigner from "../services/designer/dbGetIsFollowDesigner.js";
 import Response from "../utils/response_template.js";
 
 const designerController = {
@@ -33,7 +34,7 @@ const designerController = {
 	},
 	getFeaturedDesigners: async (req, res, next) => {
 		try {
-			const data = await dbGetFeaturedDesigners(req);
+			const data = await dbGetFeaturedDesigners(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
 			return next(err);
@@ -50,6 +51,14 @@ const designerController = {
 	getPopularDesigners: async (req, res, next) => {
 		try {
 			const data = await dbGetPopularDesigners();
+			return res.status(200).json(new Response(data).success());
+		} catch (err) {
+			return next(err);
+		}
+	},
+	getIsFollowDesigner: async (req, res, next) => {
+		try {
+			const data = await dbGetIsFollowDesigner(req, res);
 			return res.status(200).json(new Response(data).success());
 		} catch (err) {
 			return next(err);

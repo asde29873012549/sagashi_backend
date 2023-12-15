@@ -39,6 +39,11 @@ router.post("/follow/check", tokenAuthentication, userController.checkIsFollow);
 router.post("/follow", tokenAuthentication, userController.followUser);
 
 router.get("/:username/shoppingCart", tokenAuthentication, userController.getShopppingCart);
+router.get(
+	"/:username/shoppingCart/total",
+	tokenAuthentication,
+	userController.getShopppingCartTotal,
+);
 router.post("/:username/shoppingCart", tokenAuthentication, userController.addShopppingCartItem);
 router.delete(
 	"/:username/shoppingCart/:product_id",

@@ -63,6 +63,7 @@ export default async function dbGetListing(req) {
 				result: hits_extractor(data),
 			};
 		} catch (err) {
+			console.log(err, "errrr");
 			if (err instanceof EsError) {
 				throw new ElasticSearchError(err.name);
 			} else if (err instanceof ValidationError) {
@@ -82,7 +83,6 @@ export default async function dbGetListing(req) {
 				result: hits_extractor(data),
 			};
 		} catch (err) {
-			console.log(err);
 			if (err instanceof EsError) {
 				throw new ElasticSearchError(err.name);
 			} else if (err instanceof ValidationError) {

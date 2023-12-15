@@ -1,15 +1,12 @@
 import * as dotenv from "dotenv";
 import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
-import { formatDateTime } from "../../utils/date.js";
 import { DatabaseError, UnknownError, ForbiddenError } from "../../utils/api_error.js";
 
 dotenv.config();
 
-export default async function dbReadNotification(req, res) {
-	const notifications = Model.Notifications;
-
-	const { notification_id } = req.body;
+export default async function dbGetShoppinCartTotal(req, res) {
+	const shoppingCart = Model.ShoppingCart;
 
 	const jwtUsername = res.locals.user;
 
@@ -17,19 +14,16 @@ export default async function dbReadNotification(req, res) {
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
-			const message = await notifications.update(
-				{
-					read_at: formatDateTime(),
-				},
+			const { count } = await shoppingCart.findAndCountAll(
 				{
 					where: {
-						id: notification_id,
+						user_name: jwtUsername,
 					},
 				},
 				{ transaction: t },
 			);
 
-			return message;
+			return count;
 		});
 
 		return result;

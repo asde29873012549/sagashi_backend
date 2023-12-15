@@ -64,6 +64,7 @@ export default async function dbFollowUser(req, res) {
 
 			if (notifications) {
 				await publish_notification({
+					id: notifications.id,
 					type: "notification.follow",
 					username: jwtUsername,
 					followed_user: follow_user,
