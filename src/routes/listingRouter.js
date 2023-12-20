@@ -18,7 +18,11 @@ router.post("/recentlyViewed", tokenAuthentication, listingController.addRecentl
 router.post(
 	"/create",
 	tokenAuthentication,
-	upload.array("photo", 6),
+	upload.fields(
+		["primary_image", "image_0", "image_1", "image_2", "image_3", "image_4", "image_5"].map(
+			(item) => ({ name: item === "primary_image" ? "primary_image" : item, maxCount: 1 }),
+		),
+	),
 	listingController.createListing,
 );
 
@@ -27,7 +31,11 @@ router.get("/draft", tokenAuthentication, listingController.getSingleListingDraf
 router.post(
 	"/draft",
 	tokenAuthentication,
-	upload.array("photo", 6),
+	upload.fields(
+		["primary_image", "image_0", "image_1", "image_2", "image_3", "image_4", "image_5"].map(
+			(item) => ({ name: item === "primary_image" ? "primary_image" : item, maxCount: 1 }),
+		),
+	),
 	listingController.saveListingDraft,
 );
 
@@ -37,5 +45,15 @@ router.get("/curation/:curation_id", listingController.getProductFromCuration);
 router.post("/offer", tokenAuthentication, listingController.createOffer);
 
 router.get("/:id", listingController.getSingleListing);
+router.put(
+	"/:id",
+	tokenAuthentication,
+	upload.fields(
+		["primary_image", "image_0", "image_1", "image_2", "image_3", "image_4", "image_5"].map(
+			(item) => ({ name: item === "primary_image" ? "primary_image" : item, maxCount: 1 }),
+		),
+	),
+	listingController.editSingleListing,
+);
 
 export default router;

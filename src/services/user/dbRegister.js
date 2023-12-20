@@ -10,17 +10,6 @@ import {
 } from "../../utils/api_error.js";
 import { generateAccessToken, generateRefreshToken } from "../../utils/tokenGenerator.js";
 
-// import passport from "passport";
-// import { Strategy, ExtractJwt } from "passport-jwt";
-/* const opts = {
-		secretOrKey: accesss_token_secret,
-		jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
-	}
-
-	passport.use( new Strategy(opts, (jwt_payload, done) => {
-
-	})) */
-
 dotenv.config();
 
 export default async function dbRegister(req) {
@@ -45,7 +34,7 @@ export default async function dbRegister(req) {
 				defaults: {
 					username: username || email,
 					password: hashedPassword,
-					avatar: avatar || null,
+					avatar: avatar || "/defaultProfile.jpeg",
 					fullname: name || null,
 					email: email || null,
 					country: locale || null,

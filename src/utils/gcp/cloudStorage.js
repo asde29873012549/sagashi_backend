@@ -4,16 +4,16 @@ import storageNameGenerator from "./storageNameGenerator.js";
 const bucketName = "sagashi_products_data";
 const storage = new Storage();
 
-async function createFile(file, type) {
+async function createFile(fileObj, type) {
 	const fileName = storageNameGenerator();
-	await storage.bucket(bucketName).file(fileName).save(file, {
+	await storage.bucket(bucketName).file(fileName).save(fileObj.buffer, {
 		resumable: false,
 		contentType: type,
 	});
 
 	const fileUri = `https://storage.googleapis.com/${bucketName}/${fileName}`;
 
-	return fileUri;
+	return { fileUri, fieldName: fileObj.fieldname };
 }
 
 export default createFile;

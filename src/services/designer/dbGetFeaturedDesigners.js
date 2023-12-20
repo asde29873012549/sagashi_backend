@@ -6,8 +6,6 @@ import { DatabaseError, UnknownError } from "../../utils/api_error.js";
 dotenv.config();
 
 export default async function dbGetFeaturedDesigners(req, res) {
-	console.log(res.locals.user, "res.locals.user");
-
 	const featuredDesigners = Model.FeaturedDesigners;
 	const followedDesigners = Model.FollowedDesigners;
 
@@ -62,7 +60,7 @@ export default async function dbGetFeaturedDesigners(req, res) {
 			return neededData;
 		});
 	} catch (err) {
-		console.log(err, "errrr");
+		console.log(err);
 		if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);
 		}

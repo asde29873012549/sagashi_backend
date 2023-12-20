@@ -22,7 +22,7 @@ export default async function dbGetListing(req) {
 		size: 5,
 		index: product_index,
 		query: {},
-		sort: [{ updated_at: "desc" }],
+		sort: [{ created_at: "desc" }],
 	};
 
 	const support_queries = [
@@ -63,7 +63,7 @@ export default async function dbGetListing(req) {
 				result: hits_extractor(data),
 			};
 		} catch (err) {
-			console.log(err, "errrr");
+			console.log(err);
 			if (err instanceof EsError) {
 				throw new ElasticSearchError(err.name);
 			} else if (err instanceof ValidationError) {

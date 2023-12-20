@@ -13,7 +13,9 @@ import {
 } from "../../utils/api_error.js";
 
 export default async function dbCreateListing(req, res) {
-	const img = req.files;
+	const multer_handled_img = req.files;
+	const img = Object.values(multer_handled_img).map((item) => item[0]);
+
 	const {
 		department,
 		category,
@@ -50,13 +52,15 @@ export default async function dbCreateListing(req, res) {
 	if (!isColorValid || !isConditionValid) throw new ValidationError();
 
 	try {
-		fileUriArray = await Promise.all(img.map((image) => createFile(image.buffer)));
+		fileUriArray = await Promise.all(img.map((image) => createFile(image)));
 		if (fileUriArray.length > 1) {
-			fileUriArray.slice(1).forEach((file, index) => {
-				rest_of_image[`image_${index}`] = file;
+			fileUriArray.slice(1).forEach((fileObj) => {
+				console.log(fileObj.fieldName, fileObj.fileUri, "fileObj");
+				rest_of_image[fileObj.fieldName] = fileObj.fileUri;
 			});
 		}
 	} catch (err) {
+		console.log(err);
 		throw new StorageError();
 	}
 
@@ -69,7 +73,7 @@ export default async function dbCreateListing(req, res) {
 		throw new ValidationError();
 	}
 
-	const primary_image = fileUriArray[0];
+	const primary_image = fileUriArray[0]?.fileUri;
 	const secondary_image =
 		Object.keys(rest_of_image).length > 0 ? JSON.stringify(rest_of_image) : null;
 
@@ -171,6 +175,7 @@ export default async function dbCreateListing(req, res) {
 
 		return result;
 	} catch (err) {
+		console.log(err);
 		if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);
 		}
