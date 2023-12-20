@@ -21,11 +21,11 @@ const Products_to_be_sync = (sequelize) =>
 				allowNull: false,
 			},
 			category: {
-				type: DataTypes.STRING(20),
+				type: DataTypes.STRING(40),
 				allowNull: false,
 			},
 			sub_category: {
-				type: DataTypes.STRING(20),
+				type: DataTypes.STRING(60),
 				allowNull: false,
 			},
 			designer: {
@@ -75,12 +75,16 @@ const Products_to_be_sync = (sequelize) =>
 				type: DataTypes.STRING(10),
 				allowNull: false,
 			},
+			updated_at: {
+				type: DataTypes.DATE,
+			},
 		},
 		{
 			sequelize,
 			underscored: true,
 			schema: "sagashi",
 			freezeTableName: true,
+			updatedAt: false,
 		},
 	);
 

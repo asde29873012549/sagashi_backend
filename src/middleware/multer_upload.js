@@ -1,8 +1,8 @@
 import multer from "multer";
 
 const limits = {
-	parts: 23,
-	fields: 17,
+	parts: 23, // max number of parts (non-file fields + files)
+	fields: 17, // max number of non-file fields
 	files: 6,
 	fileSize: 8 * 1024 * 1024,
 };

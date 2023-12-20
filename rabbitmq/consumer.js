@@ -21,18 +21,33 @@ async function mq_consumer() {
 				const res = JSON.parse(message.content.toString());
 				if (res) {
 					const { prod_id, sub_category, id, ...rest_data } = res.data;
+					let create_or_update = null;
 
-					const create_doc = await es_client.index({
-						index: product_index,
-						id: prod_id,
-						document: {
-							prod_id,
-							subCategory: sub_category,
-							...rest_data,
-						},
-					});
+					if (!rest_data.updated_at) {
+						console.log("create");
+						create_or_update = await es_client.index({
+							index: product_index,
+							id: prod_id,
+							document: {
+								prod_id,
+								subCategory: sub_category,
+								...rest_data,
+							},
+						});
+					} else {
+						console.log("update");
+						create_or_update = await es_client.update({
+							index: product_index,
+							id: prod_id,
+							doc: {
+								prod_id,
+								subCategory: sub_category,
+								...rest_data,
+							},
+						});
+					}
 
-					if (create_doc) channel.ack(message);
+					if (create_or_update) channel.ack(message);
 				}
 			},
 			{

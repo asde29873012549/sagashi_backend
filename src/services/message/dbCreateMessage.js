@@ -22,7 +22,7 @@ export default async function dbCreateMessage(req, res) {
 
 	try {
 		// optimistically create message
-		result = await sequelize.transaction(async (t) => {
+		await sequelize.transaction(async (t) => {
 			const message = await messages.create(
 				{
 					sender_name: jwtUsername,

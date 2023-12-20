@@ -1,6 +1,7 @@
 import dbCreateListing from "../services/listing/dbCreateListing.js";
 import dbGetAllListing from "../services/listing/dbGetAllListing.js";
 import dbGetSingleListing from "../services/listing/dbGetSingleListing.js";
+import dbEditSingleListing from "../services/listing/dbEditSingleListing.js";
 import dbLikeListing from "../services/listing/dbLikeListing.js";
 import dbGetUserLikeListing from "../services/listing/dbGetUserLikeListing.js";
 import dbGetListingLikeCount from "../services/listing/dbGetListingLikeCount.js";
@@ -37,6 +38,14 @@ const listingController = {
 	getSingleListing: async (req, res, next) => {
 		try {
 			const data = await dbGetSingleListing(req);
+			res.status(200).json(new Response(data).success());
+		} catch (err) {
+			next(err);
+		}
+	},
+	editSingleListing: async (req, res, next) => {
+		try {
+			const data = await dbEditSingleListing(req, res);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
 			next(err);
