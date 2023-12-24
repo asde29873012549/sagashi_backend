@@ -10,7 +10,9 @@ import {
 
 export default async function dbSaveListingDraft(req, res) {
 	const products = Model.Products;
-	const img = req.files;
+	const multer_handled_img = req.files;
+
+	const img = Object.values(multer_handled_img).map((item) => item[0]);
 
 	const {
 		department_id,
@@ -42,10 +44,10 @@ export default async function dbSaveListingDraft(req, res) {
 
 	if (img && img.length > 0) {
 		try {
-			fileUriArray = await Promise.all(img.map((image) => createFile(image.buffer)));
+			fileUriArray = await Promise.all(img.map((image) => createFile(image)));
 			if (fileUriArray.length > 1) {
-				fileUriArray.slice(1).forEach((file, index) => {
-					rest_of_image[`image_${index}`] = file;
+				fileUriArray.slice(1).forEach((fileObj) => {
+					rest_of_image[fileObj.fieldName] = fileObj.fileUri;
 				});
 			}
 		} catch (err) {
@@ -53,7 +55,7 @@ export default async function dbSaveListingDraft(req, res) {
 		}
 	}
 
-	const primary_image = fileUriArray && fileUriArray[0];
+	const primary_image = fileUriArray && fileUriArray[0]?.fileUri;
 	const secondary_image =
 		Object.keys(rest_of_image).length > 0 ? JSON.stringify(rest_of_image) : null;
 

@@ -9,6 +9,8 @@ router.post("/register", userController.register);
 router.post("/refreshToken", userController.refreshToken);
 router.get("/listing", tokenAuthentication, userController.getUserListing);
 
+router.post("/recentlyViewed", tokenAuthentication, userController.recordRecentlyViewed);
+
 router.get("/:username/info", tokenAuthentication, userController.getUserInfo);
 router.put("/:username/info", tokenAuthentication, userController.updateUserInfo);
 router.get("/public/:username/info", userController.getPublicUserInfo);

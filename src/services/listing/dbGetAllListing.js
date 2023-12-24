@@ -14,12 +14,12 @@ const product_index = process.env.ES_PRODUCT_INDEX;
 export default async function dbGetListing(req) {
 	let result;
 
-	const { user } = req.query;
+	const { user, limit } = req.query;
 
 	const filterQuery = req.body || {};
 
 	const query_template = {
-		size: 5,
+		size: limit || 5,
 		index: product_index,
 		query: {},
 		sort: [{ created_at: "desc" }],

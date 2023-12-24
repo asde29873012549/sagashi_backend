@@ -9,7 +9,6 @@ import dbSaveListingDraft from "../services/listing/dbSaveListingDraft.js";
 import dbGetListingDraft from "../services/listing/dbGetListingDraft.js";
 import dbGetSingleListingDraft from "../services/listing/dbGetSingleListingDraft.js";
 import dbGetRecentlyViewed from "../services/listing/dbGetRecentlyViewed.js";
-import dbAddRecentlyViewed from "../services/listing/dbAddRecentlyViewed.js";
 import dbGetCuration from "../services/listing/dbGetCuration.js";
 import dbGetProductFromCuration from "../services/listing/dbGetProductFromCuration.js";
 import dbCreateOffer from "../services/listing/dbCreateOffer.js";
@@ -102,14 +101,6 @@ const listingController = {
 	getRecentlyViewed: async (req, res, next) => {
 		try {
 			const data = await dbGetRecentlyViewed(req, res);
-			res.status(200).json(new Response(data).success());
-		} catch (err) {
-			next(err);
-		}
-	},
-	addRecentlyViewed: async (req, res, next) => {
-		try {
-			const data = await dbAddRecentlyViewed(req, res);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
 			next(err);

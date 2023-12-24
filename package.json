@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"dev": "concurrently \"nodemon src/index.js\" \"nodemon src/pg_listener.js\" \"nodemon rabbitmq/consumer.js\"",
+		"dev": "concurrently \"nodemon src/index.js\" \"nodemon src/pg_listener.js\" \"nodemon rabbitmq/postgres_service/consumer.js\" \"nodemon rabbitmq/log_service/consumer.js\"",
 		"index": "nodemon src/index.js",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"lint": "npx eslint src/**/*.js --fix",

@@ -21,7 +21,7 @@ export default async function dbEditSingleListing(req, res) {
 	const imageObj = {};
 	let fileUriArray;
 
-	const { desc, tags, primary_image, ...rest_body } = req.body;
+	const { isDraft, desc, tags, primary_image, ...rest_body } = req.body;
 	const {
 		item_name,
 		price,
@@ -96,6 +96,7 @@ export default async function dbEditSingleListing(req, res) {
 					prod_cat_ref_start: subCategory_id,
 					size_id,
 					color,
+					status: "1",
 				},
 				{
 					where: {
@@ -121,7 +122,7 @@ export default async function dbEditSingleListing(req, res) {
 					secondary_image,
 					condition,
 					tags,
-					updated_at: formattedCurrrentTime,
+					updated_at: isDraft ? null : formattedCurrrentTime,
 					department,
 					category,
 					sub_category: subCategory,

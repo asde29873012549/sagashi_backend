@@ -13,14 +13,14 @@ dotenv.config();
 const designer_index = process.env.ES_DESIGNER_INDEX;
 
 export default async function dbGetDesigners(req) {
-	const querySizeLimit = 10;
+	const querySizeLimit = 100;
 	let result;
 
-	const { keyword, cursor } = req.query;
+	const { keyword, cursor, limit } = req.query;
 
 	const query_template = {
 		_source: ["designer_id", "name"],
-		size: querySizeLimit,
+		size: limit || querySizeLimit,
 		index: designer_index,
 		query: {},
 		sort: [{ designer_id: "asc" }],

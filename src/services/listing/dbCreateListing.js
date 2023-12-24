@@ -55,12 +55,10 @@ export default async function dbCreateListing(req, res) {
 		fileUriArray = await Promise.all(img.map((image) => createFile(image)));
 		if (fileUriArray.length > 1) {
 			fileUriArray.slice(1).forEach((fileObj) => {
-				console.log(fileObj.fieldName, fileObj.fileUri, "fileObj");
 				rest_of_image[fileObj.fieldName] = fileObj.fileUri;
 			});
 		}
 	} catch (err) {
-		console.log(err);
 		throw new StorageError();
 	}
 

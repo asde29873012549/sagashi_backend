@@ -27,7 +27,6 @@ const RecentlyViewed = (sequelize) =>
 			schema: "sagashi",
 			freezeTableName: true,
 			timestamps: true,
-			updatedAt: false,
 			indexes: [
 				{
 					using: "BTREE",

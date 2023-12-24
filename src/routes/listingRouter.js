@@ -14,7 +14,6 @@ router.get("/color", listingController.getColor);
 router.get("/condition", listingController.getCondition);
 router.get("/similar", listingController.getSimilarListing);
 router.get("/recentlyViewed", tokenAuthentication, listingController.getRecentlyViewed);
-router.post("/recentlyViewed", tokenAuthentication, listingController.addRecentlyViewed);
 router.post(
 	"/create",
 	tokenAuthentication,

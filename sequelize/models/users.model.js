@@ -25,7 +25,7 @@ const Users = (sequelize) =>
 				type: DataTypes.DATEONLY,
 			},
 			gender: {
-				type: DataTypes.STRING(10),
+				type: DataTypes.STRING(15),
 			},
 			language: {
 				type: DataTypes.STRING(50),

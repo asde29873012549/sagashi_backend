@@ -1,22 +1,22 @@
 import * as dotenv from "dotenv";
-import mq_connect from "./client.js";
+import mq_connect from "../client.js";
 
-import es_client from "../elastic_search/client.js";
+import es_client from "../../elastic_search/client.js";
 
 dotenv.config();
 
 const product_index = process.env.ES_PRODUCT_INDEX;
-const mq_queue = process.env.RABBITMQ_QUEUE;
+const product_sync_queue = process.env.PRODUCT_SYNC_QUEUE;
 
 async function mq_consumer() {
-	console.log("rabbitmq consumer start consuming");
+	console.log("rabbitmq product_sync consumer start consuming");
 	const connection = await mq_connect();
 	try {
 		const channel = await connection.createChannel();
-		await channel.assertQueue(mq_queue);
+		await channel.assertQueue(product_sync_queue);
 
 		channel.consume(
-			mq_queue,
+			product_sync_queue,
 			async (message) => {
 				const res = JSON.parse(message.content.toString());
 				if (res) {
