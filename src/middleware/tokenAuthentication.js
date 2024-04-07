@@ -17,8 +17,9 @@ export default function tokenAuthentication(req, res, next) {
 	const token = headerStr.split(" ")[1];
 
 	return jwt.verify(token, accesss_token_secret, (err, user) => {
-		if (err)
+		if (err) {
 			return res.status(401).json(new Response({ message: "User access unauthenticated" }).fail());
+		}
 
 		res.locals.user = user.username;
 		return next();

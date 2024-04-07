@@ -20,7 +20,7 @@ export default async function dbGetRecentlyViewed(req, res) {
 						user_name: jwtUsername,
 					},
 					include: {
-						attributes: ["name", "price", "desc", "primary_image", "created_at"],
+						attributes: ["name", "price", "desc", "primary_image", "created_at", "seller_name"],
 						model: products,
 						require: true,
 						include: {
@@ -29,7 +29,7 @@ export default async function dbGetRecentlyViewed(req, res) {
 							require: true,
 						},
 					},
-					order: [["created_at", "DESC"]],
+					order: [["updated_at", "DESC"]],
 					limit: 8,
 				},
 				{ transaction: t },

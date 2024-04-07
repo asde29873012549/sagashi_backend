@@ -4,12 +4,23 @@ import sequelize, { Model } from "../../../sequelize/index.js";
 import colorData from "../../data/color.js";
 import createFile from "../../utils/gcp/cloudStorage.js";
 import conditionData from "../../data/condition.js";
+import requiredFieldValidation from "../../utils/requiredFieldValidation.js";
 import {
 	DatabaseError,
 	StorageError,
 	ValidationError,
 	UnknownError,
 } from "../../utils/api_error.js";
+
+function generateSecondaryImageObj(rest_body, imageObj) {
+	const secondary_image = {};
+	Object.keys(imageObj).forEach((key) => {
+		if (key !== "primary_image") {
+			secondary_image[key] = rest_body[key] || imageObj[key];
+		}
+	});
+	return JSON.stringify(secondary_image);
+};
 
 export default async function dbEditSingleListing(req, res) {
 	const multer_handled_img = req.files;
@@ -37,11 +48,7 @@ export default async function dbEditSingleListing(req, res) {
 	} = rest_body;
 
 	// check for all required fields except desc & tags
-	Object.values(rest_body).forEach((field) => {
-		if (!field || field === " ") {
-			throw new ValidationError();
-		}
-	});
+	requiredFieldValidation(rest_body);
 
 	// Check for invalid color & condition data
 	const isColorValid = colorData.find((element) => element === color);
@@ -59,23 +66,13 @@ export default async function dbEditSingleListing(req, res) {
 	}
 
 	const regex = /[^\w\d]+/g;
-	const slug = tags && tags.split(regex);
-	const purifyTags = slug && slug.join("#");
+	const slug = tags?.split(regex);
+	const purifyTags = slug?.join("#");
 
 	const numericPrice = Number(price);
 	if (Number.isNaN(numericPrice)) {
 		throw new ValidationError();
 	}
-
-	const generateSecondaryImageObj = () => {
-		const secondary_image = {};
-		Object.keys(imageObj).forEach((key) => {
-			if (key !== "primary_image") {
-				secondary_image[key] = rest_body[key] || imageObj[key];
-			}
-		});
-		return JSON.stringify(secondary_image);
-	};
 
 	const secondary_image = generateSecondaryImageObj();
 
@@ -146,7 +143,6 @@ export default async function dbEditSingleListing(req, res) {
 
 		return result;
 	} catch (err) {
-		console.log(err);
 		if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);
 		}

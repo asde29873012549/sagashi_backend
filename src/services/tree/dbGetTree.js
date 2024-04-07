@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 import { BaseError as SequelizeGenericError } from "sequelize";
 import sequelize, { Model } from "../../../sequelize/index.js";
 import { DatabaseError, UnknownError } from "../../utils/api_error.js";
-import { cat_generator, size_generator } from "../../utils/tree_helper.js";
+import { cat_generator_for_tree, size_generator } from "../../utils/tree_helper.js";
 
 dotenv.config();
 
@@ -57,7 +57,7 @@ export default async function dbGetTree(req) {
 
 		tree.Department = dept;
 		tree.NewArrivals = null;
-		tree.Category = cat_generator(Category);
+		tree.Category = cat_generator_for_tree(Category);
 		tree.Sizes = size_generator(size, categorySplitNum);
 		tree.Designer = featuredDesigner.map((designer) => designer.Designer.name);
 		tree.Condition = condition;

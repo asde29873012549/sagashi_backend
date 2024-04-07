@@ -124,7 +124,7 @@ const listingController = {
 	},
 	createOffer: async (req, res, next) => {
 		try {
-			const data = await dbCreateOffer(req);
+			const data = await dbCreateOffer(req, res);
 			res.status(200).json(new Response(data).success());
 		} catch (err) {
 			next(err);

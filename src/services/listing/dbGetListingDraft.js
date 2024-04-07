@@ -17,6 +17,7 @@ export default async function dbGetListingDraft(req, res) {
 		const result = await sequelize.transaction(async (t) => {
 			const draft_listing = await products.findAll(
 				{
+					attributes: [["id", "prod_id"], "name", "price", "condition", "color", "desc", "tags", "prod_cat_ref_start", "primary_image", "secondary_image", "status", "stock", "seller_name", "created_at", "updated_at"],
 					include: [
 						{
 							attributes: ["name"],
@@ -65,29 +66,36 @@ export default async function dbGetListingDraft(req, res) {
 				{ transaction: t },
 			);
 
-			const reformedCategoryData = {}
+			const ress = {...draft_listing[0].dataValues};
+
 			categoryData.forEach((catObj) => {
 				switch (catObj.level) {
 					case 1:
-						reformedCategoryData.department = catObj.name;
+						ress.department = catObj.name;
 						break;
 					case 2:
-						reformedCategoryData.category = catObj.name;
+						ress.category = catObj.name;
 						break;
 					case 3:
-						reformedCategoryData.subCategory = catObj.name;
+						ress.subCategory = catObj.name;
 						break;
 					default:
 						throw new UnknownError();
 				}
 			});
 
-			return [{...draft_listing[0].dataValues, Category:{...reformedCategoryData} }];
+			ress.designer = ress.Designer?.name ?? null;
+			ress.size = ress.Size?.name ?? null;
+			delete ress.Designer;
+			delete ress.Size;
+			delete ress.prod_cat_ref_start;
+
+			return [ress];
 		});
 
 		return result;
 	} catch (err) {
-		console.log(err, "errrrr")
+		console.log(err);
 		if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);
 		}

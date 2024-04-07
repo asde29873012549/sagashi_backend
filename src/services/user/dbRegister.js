@@ -34,7 +34,7 @@ export default async function dbRegister(req) {
 				defaults: {
 					username: username || email,
 					password: hashedPassword,
-					avatar: avatar || "/defaultProfile.jpeg",
+					avatar: avatar || "/defaultProfile.webp",
 					fullname: name || null,
 					email: email || null,
 					country: locale || null,

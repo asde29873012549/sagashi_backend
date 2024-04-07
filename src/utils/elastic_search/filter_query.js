@@ -11,16 +11,16 @@ const filterQuery = (query_template, filters) => {
 		range: {},
 	};
 
-	const key_helper = (key) => {
-		switch (key) {
-			case "name":
-				return "subCategory";
-			case "dept":
+	const key_helper = (index) => {
+		switch (index) {
+			case 0:
 				return "department";
-			case "cat":
+			case 1:
 				return "category";
+			case 2:
+				return "subCategory";
 			default:
-				return key;
+				return "department";
 		}
 	};
 
@@ -38,18 +38,18 @@ const filterQuery = (query_template, filters) => {
 	const processObjectFilter = (filterArray, defaultKey) => {
 		const bool_template = {
 			bool: {
-				should: filterArray.map((obj) => {
+				should: filterArray.map((str) => {
 					const bool_filter_template = {
 						bool: { filter: [] },
 					};
 
-					Object.keys(obj).forEach((key) => {
+					str.split("@").forEach((k, index) => {
 						bool_filter_template.bool.filter.push({
 							term: {
-								[defaultKey && key === "name" ? defaultKey : key_helper(key)]: obj[key],
+								[defaultKey && index === 2 ? defaultKey : key_helper(index)]: k,
 							},
 						});
-					});
+					})
 
 					return bool_filter_template;
 				}),
@@ -106,6 +106,8 @@ const filterQuery = (query_template, filters) => {
 		console.log(err);
 		throw new ValidationError();
 	}
+
+	// console.log(es_query)
 
 	return es_query;
 };

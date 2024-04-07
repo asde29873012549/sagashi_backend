@@ -5,11 +5,12 @@ import colorData from "../../data/color.js";
 import conditionData from "../../data/condition.js";
 import publish_notification from "../../../rabbitmq/notification_service/publisher.js";
 import { getNowISODate } from "../../utils/date.js";
+import requiredFieldValidation from "../../utils/requiredFieldValidation.js";
 import {
 	DatabaseError,
 	StorageError,
-	ValidationError,
 	UnknownError,
+	ValidationError,
 } from "../../utils/api_error.js";
 
 export default async function dbCreateListing(req, res) {
@@ -38,12 +39,8 @@ export default async function dbCreateListing(req, res) {
 
 	const { desc, tags, ...rest_body } = req.body;
 
-	// check for all required fields except desc & tags
-	Object.values(rest_body).forEach((field) => {
-		if (!field || field === " ") {
-			throw new ValidationError();
-		}
-	});
+	// check for all required fields (except desc & tags)
+	requiredFieldValidation(rest_body);
 
 	// Check for invalid color & condition data
 	const isColorValid = colorData.find((element) => element === color);
@@ -63,8 +60,8 @@ export default async function dbCreateListing(req, res) {
 	}
 
 	const regex = /[^\w\d]+/g;
-	const slug = tags && tags.split(regex);
-	const purifyTags = slug && slug.join("#");
+	const slug = tags?.split(regex);
+	const purifyTags = slug?.join("#");
 
 	const numericPrice = Number(price);
 	if (Number.isNaN(numericPrice)) {
@@ -173,7 +170,6 @@ export default async function dbCreateListing(req, res) {
 
 		return result;
 	} catch (err) {
-		console.log(err);
 		if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);
 		}
