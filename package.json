@@ -6,7 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "concurrently \"nodemon src/index.js\" \"nodemon src/pg_listener.js\" \"nodemon rabbitmq/postgres_service/consumer.js\" \"nodemon rabbitmq/log_service/consumer.js\"",
-		"index": "nodemon src/index.js",
+		"start": "concurrently \"node src/index.js\" \"node src/pg_listener.js\" \"node rabbitmq/postgres_service/consumer.js\" \"node rabbitmq/log_service/consumer.js\"",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"lint": "npx eslint src/**/*.js --fix",
 		"prettify": "npx prettier . --write"

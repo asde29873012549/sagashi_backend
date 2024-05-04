@@ -15,6 +15,9 @@ async function mq_consumer() {
 	const connection = await mq_connect();
 	const channel = await connection.createChannel();
 	const { queue } = await channel.assertQueue(topic, { durable: true });
+	console.log(`queue ${queue} asserted`);
+	await channel.assertExchange(log_exchange, "topic", { durable: true });
+	console.log(`exchange ${log_exchange} asserted`);
 	await channel.bindQueue(queue, log_exchange, topic);
 	console.log(`finish binding queue ${queue} to exchange ${log_exchange} with topic ${topic}`);
 
@@ -48,7 +51,7 @@ async function mq_consumer() {
 		if (err instanceof SequelizeGenericError) {
 			console.log(err);
 		} else {
-			console.log(err);
+			console.log(`Failed to consume message from queue ${queue} to exchange ${log_exchange} with topic ${topic}`, err);
 			// connection.close()
 		}
 	}

@@ -55,7 +55,7 @@ async function mq_consumer() {
 			},
 		);
 	} catch (err) {
-		console.log(err);
+		console.log(`Failed to consume message to ${product_sync_queue}`, err);
 		// connection.close()
 	}
 }

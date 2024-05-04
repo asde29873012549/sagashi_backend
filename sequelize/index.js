@@ -25,7 +25,6 @@ import sizes_categories_map from "./models/sizes_categories_map.model.js";
 import products_curations_map from "./models/products_curations_map.model.js";
 import notification_receiver_map from "./models/notification_receiver_map.model.js";
 
-const pg_channel = process.env.PG_NOTIFY_CHANNEL;
 
 const modelDefiners = [
 	faqs,
@@ -59,13 +58,16 @@ modelDefiners.forEach((model) => {
 
 associations(sequelize);
 
+/*
+const pg_channel = process.env.PG_NOTIFY_CHANNEL;
+
 async function syncDB() {
 	await sequelize.sync({
 		schema: "sagashi",
 	});
 }
 
-/*
+
 await syncDB();
 
 // Create notify function
