@@ -12,6 +12,7 @@ import validator from "../../utils/elastic_search/validator.js";
 const product_index = process.env.ES_PRODUCT_INDEX;
 
 export default async function dbGetListing(req) {
+	console.log("Getting listing from elastic search...")
 	let result;
 
 	const { user, limit } = req.query;
@@ -40,8 +41,9 @@ export default async function dbGetListing(req) {
 	];
 
 	// check for invalid query param
+	console.log("start validating client queries...")
 	const validated = validator(support_queries, filterQuery);
-
+	console.log("Validating client queries completed without error")
 	if (validated.length === 0 || (validated.includes("cursor") && validated.length === 1)) {
 		// if no filter specified or cursor is the only filter
 		// get all listing
@@ -57,12 +59,14 @@ export default async function dbGetListing(req) {
 		if (validated.includes("cursor")) es_query.search_after = filterQuery.cursor;
 
 		try {
+			console.log("searching result from elastic search...")
 			const data = await client.search(es_query);
 			result = {
 				total: data.hits.total.value,
 				result: hits_extractor(data),
 			};
 		} catch (err) {
+			console.log("Failed on searching result from elastic search")
 			console.log(err);
 			if (err instanceof EsError) {
 				throw new ElasticSearchError(err.name);
@@ -77,12 +81,15 @@ export default async function dbGetListing(req) {
 			const query = filter_query(query_template, filterQuery);
 			if (user) query.query.bool.filter.push({ term: { seller_name: user } });
 
+			console.log("searching result from elastic search...")
 			const data = await client.search(query);
 			result = {
 				total: data.hits.total.value,
 				result: hits_extractor(data),
 			};
 		} catch (err) {
+			console.log("Failed on searching result from elastic search")
+			console.log(err);
 			if (err instanceof EsError) {
 				throw new ElasticSearchError(err.name);
 			} else if (err instanceof ValidationError) {

@@ -65,7 +65,7 @@ async function syncDB() {
 	});
 }
 
-/*
+
 await syncDB();
 
 // Create notify function
@@ -110,7 +110,6 @@ CREATE OR REPLACE TRIGGER products_notify
     FOR EACH ROW
     EXECUTE FUNCTION sagashi.notify_trigger();
 `)
-*/
 
 const Model = sequelize.models;
 
