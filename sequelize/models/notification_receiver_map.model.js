@@ -4,9 +4,13 @@ const NotificationReceiverMap = (sequelize) =>
 	sequelize.define(
 		"NotificationReceiverMap",
 		{
+			id: {
+				type: DataTypes.INTEGER,
+				autoIncrement: true,
+				primaryKey: true,
+			},
 			notification_id: {
 				type: DataTypes.INTEGER,
-				primaryKey: true,
 				references: {
 					model: "Notifications",
 					key: "id",
@@ -14,7 +18,6 @@ const NotificationReceiverMap = (sequelize) =>
 			},
 			username: {
 				type: DataTypes.STRING(80),
-				primaryKey: true,
 				references: {
 					model: "Users",
 					key: "username",

@@ -4,9 +4,13 @@ const Follows = (sequelize) =>
 	sequelize.define(
 		"Follows",
 		{
+			id: {
+				type: DataTypes.INTEGER,
+				autoIncrement: true,
+				primaryKey: true,
+			},
 			user_name: {
 				type: DataTypes.STRING(80),
-				primaryKey: true,
 				references: {
 					model: "Users",
 					key: "username",
@@ -14,7 +18,6 @@ const Follows = (sequelize) =>
 			},
 			follower_name: {
 				type: DataTypes.STRING(80),
-				primaryKey: true,
 				references: {
 					model: "Users",
 					key: "username",

@@ -443,21 +443,25 @@ const applyAssociations = (sequelize) => {
 		},
 	});
 	Messages.belongsTo(Chatrooms, {
-		as: "chatroomMessages",
+		as: "MessagesOfChatroom",
 		foreignKey: {
 			name: "chatroom_id",
 		},
 	});
 
 	// Chatrooms - Messages One-To-One
-	/* Messages.hasOne(Chatrooms, {
-		as: "last_message_asssociation",
-		foreignKey: "last_message",
+	Messages.hasOne(Chatrooms, {
+		as: "lastMessageOfChatroom",
+		foreignKey: {
+			name: "last_message",
+		},
 		constraints: false,
-	}); */
+	});
 	Chatrooms.belongsTo(Messages, {
-		as: "last_message_asssociation",
-		foreignKey: "last_message",
+		as: "chatroomsLastMessage",
+		foreignKey: {
+			name: "last_message",
+		},
 		constraints: false,
 	});
 };
