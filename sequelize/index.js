@@ -25,7 +25,6 @@ import sizes_categories_map from "./models/sizes_categories_map.model.js";
 import products_curations_map from "./models/products_curations_map.model.js";
 import notification_receiver_map from "./models/notification_receiver_map.model.js";
 
-const pg_channel = process.env.PG_NOTIFY_CHANNEL;
 
 const modelDefiners = [
 	faqs,
@@ -53,20 +52,37 @@ const modelDefiners = [
 	notification_receiver_map,
 ];
 
-modelDefiners.forEach((model) => {
-	model(sequelize);
-});
+// Define all models asynchronously
+const defineModels = async () => {
+    await Promise.all(modelDefiners.map(model => model(sequelize)));
+};
 
-associations(sequelize);
+// Setup associations
+const setupAssociations = () => {
+    associations(sequelize);
+};
 
-async function syncDB() {
-	await sequelize.sync({
-		schema: "sagashi",
-	});
-}
+// Sync database
+const syncDatabase = async () => {
+    await sequelize.sync({ schema: "sagashi" });
+};
 
+// Initialize database and models
+const initializeDatabase = async () => {
+    try {
+        await defineModels();
+        setupAssociations();
+        await syncDatabase();
+        console.log('Database and models are initialized and synchronized.');
+    } catch (error) {
+        console.error('Error initializing the database:', error);
+    }
+};
 
-await syncDB();
+// Execute the database initialization
+await initializeDatabase();
+
+const pg_channel = process.env.PG_NOTIFY_CHANNEL;
 
 // Create notify function
 await sequelize.query(`
@@ -110,6 +126,7 @@ CREATE OR REPLACE TRIGGER products_notify
     FOR EACH ROW
     EXECUTE FUNCTION sagashi.notify_trigger();
 `)
+
 
 const Model = sequelize.models;
 

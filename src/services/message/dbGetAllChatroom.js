@@ -30,7 +30,7 @@ export default async function GetAllChatroom(req, res) {
 					where: whereClause,
 					include: {
 						model: messages,
-						as: "last_message_asssociation",
+						as: "chatroomsLastMessage",
 						attributes: ["read_at", "text"],
 					},
 					order: [["updated_at", "DESC"]],
@@ -43,11 +43,11 @@ export default async function GetAllChatroom(req, res) {
 
 		const transformedResult = result.map((item) => {
 			const { dataValues } = item;
-			const { last_message_asssociation, ...rest } = dataValues;
+			const { chatroomsLastMessage, ...rest } = dataValues;
 			return {
 				...rest,
-				text: last_message_asssociation.text,
-				read_at: last_message_asssociation.read_at,
+				text: chatroomsLastMessage.text,
+				read_at: chatroomsLastMessage.read_at,
 			};
 		});
 

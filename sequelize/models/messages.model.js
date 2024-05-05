@@ -4,6 +4,11 @@ const Messages = (sequelize) =>
 	sequelize.define(
 		"Messages",
 		{
+			id: {
+				type: DataTypes.INTEGER,
+				autoIncrement: true,
+				primaryKey: true,
+			},
 			sender_name: {
 				type: DataTypes.STRING(80),
 				references: {
