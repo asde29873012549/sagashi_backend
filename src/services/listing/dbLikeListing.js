@@ -80,6 +80,7 @@ export default async function dbLikeListing(req, res) {
 
 		return result;
 	} catch (err) {
+		console.log(err);
 		if (err instanceof SequelizeGenericError) {
 			throw new DatabaseError(err.name);
 		}
