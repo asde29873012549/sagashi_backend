@@ -63,16 +63,16 @@ const setupAssociations = () => {
 };
 
 // Sync database
-const syncDatabase = async () => {
-    await sequelize.sync({ schema: "sagashi" });
-};
+// const syncDatabase = async () => {
+//     await sequelize.sync({ schema: "sagashi" });
+// };
 
 // Initialize database and models
 const initializeDatabase = async () => {
     try {
         await defineModels();
         setupAssociations();
-        await syncDatabase();
+        // await syncDatabase();
         console.log('Database and models are initialized and synchronized.');
     } catch (error) {
         console.error('Error initializing the database:', error);
@@ -82,50 +82,50 @@ const initializeDatabase = async () => {
 // Execute the database initialization
 await initializeDatabase();
 
-const pg_channel = process.env.PG_NOTIFY_CHANNEL;
+// const pg_channel = process.env.PG_NOTIFY_CHANNEL;
 
 // Create notify function
-await sequelize.query(`
-CREATE OR REPLACE FUNCTION sagashi.notify_trigger() RETURNS trigger AS $trigger$
-DECLARE
-  rec RECORD;
-  payload TEXT;
-  column_name TEXT;
-  column_value TEXT;
-  payload_items json;
-BEGIN
-  -- Set record row depending on operation
-  CASE TG_OP
-  WHEN 'INSERT','UPDATE' THEN
-     rec := NEW;
-  WHEN 'DELETE' THEN
-     rec := OLD;
-  ELSE
-     RAISE EXCEPTION 'Unknown TG_OP: "%". Should not occur!', TG_OP;
-  END CASE;
+// await sequelize.query(`
+// CREATE OR REPLACE FUNCTION sagashi.notify_trigger() RETURNS trigger AS $trigger$
+// DECLARE
+//   rec RECORD;
+//   payload TEXT;
+//   column_name TEXT;
+//   column_value TEXT;
+//   payload_items json;
+// BEGIN
+//   -- Set record row depending on operation
+//   CASE TG_OP
+//   WHEN 'INSERT','UPDATE' THEN
+//      rec := NEW;
+//   WHEN 'DELETE' THEN
+//      rec := OLD;
+//   ELSE
+//      RAISE EXCEPTION 'Unknown TG_OP: "%". Should not occur!', TG_OP;
+//   END CASE;
 
-  -- Get required fields
-  payload_items := row_to_json(rec);
+//   -- Get required fields
+//   payload_items := row_to_json(rec);
 
-  -- Build the payload
-  payload := json_build_object('timestamp',CURRENT_TIMESTAMP,'operation',TG_OP,'schema',TG_TABLE_SCHEMA,'table',TG_TABLE_NAME,'data',payload_items);
+//   -- Build the payload
+//   payload := json_build_object('timestamp',CURRENT_TIMESTAMP,'operation',TG_OP,'schema',TG_TABLE_SCHEMA,'table',TG_TABLE_NAME,'data',payload_items);
 
-  -- Notify the channel
-  PERFORM pg_notify('${pg_channel}', payload);
+//   -- Notify the channel
+//   PERFORM pg_notify('${pg_channel}', payload);
   
-  RETURN rec;
-END;
-$trigger$ LANGUAGE plpgsql;
-`)
+//   RETURN rec;
+// END;
+// $trigger$ LANGUAGE plpgsql;
+// `)
 
 // Create trigger
-await sequelize.query(`
-CREATE OR REPLACE TRIGGER products_notify
-    AFTER INSERT OR DELETE OR UPDATE
-    ON sagashi."Products_to_be_sync"
-    FOR EACH ROW
-    EXECUTE FUNCTION sagashi.notify_trigger();
-`)
+// await sequelize.query(`
+// CREATE OR REPLACE TRIGGER products_notify
+//     AFTER INSERT OR DELETE OR UPDATE
+//     ON sagashi."Products_to_be_sync"
+//     FOR EACH ROW
+//     EXECUTE FUNCTION sagashi.notify_trigger();
+// `)
 
 
 const Model = sequelize.models;
