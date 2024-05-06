@@ -13,6 +13,7 @@ export default async function dbGetSubscriber(req, res) {
 
 	try {
 		const result = await sequelize.transaction(async (t) => {
+			// find all users that the current user is following
 			const followed_users = await follows.findAll(
 				{
 					attributes: ["user_name"],
