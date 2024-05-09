@@ -2,6 +2,7 @@ import dbGetMessage from "../services/message/dbGetMessage.js";
 import dbCreateMessage from "../services/message/dbCreateMessage.js";
 import dbReadMessage from "../services/message/dbReadMessage.js";
 import dbGetAllChatroom from "../services/message/dbGetAllChatroom.js";
+import dbReadAllMessage from "../services/message/dbReadAllMessage.js";
 import Response from "../utils/response_template.js";
 
 const userController = {
@@ -37,6 +38,14 @@ const userController = {
 			return next(err);
 		}
 	},
+	readAllMessages: async (req, res, next) => {
+		try {
+			const data = await dbReadAllMessage(req, res, true);
+			return res.status(200).json(new Response(data).success());
+		} catch (err) {
+			return next(err);
+		}
+	}
 };
 
 export default userController;
