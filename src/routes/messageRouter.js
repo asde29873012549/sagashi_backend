@@ -5,8 +5,9 @@ import tokenAuthentication from "../middleware/tokenAuthentication.js";
 const router = express.Router();
 
 router.get("/", tokenAuthentication, messageController.getAllChatroom);
-router.get("/:chatroom_id", /*tokenAuthentication,*/ messageController.getMessages);
+router.get("/:chatroom_id", /* tokenAuthentication, */ messageController.getMessages);
 router.post("/", tokenAuthentication, messageController.createMessages);
 router.put("/", tokenAuthentication, messageController.readMessages);
+router.put("/all", tokenAuthentication, messageController.readAllMessages);
 
 export default router;
