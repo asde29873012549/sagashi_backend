@@ -1,10 +1,10 @@
-import fs from "fs";
 import * as dotenv from "dotenv";
+import fs from "fs";
 import { Client } from "@elastic/elasticsearch";
 
 dotenv.config();
 
-const { ES_SERVER, ES_USERNAME, ES_PASSWORD } = process.env;
+const { NODE_ENV, ES_SERVER, ES_USERNAME, ES_PASSWORD } = process.env;
 
 const client = new Client({
 	node: ES_SERVER,
@@ -13,8 +13,8 @@ const client = new Client({
 		password: ES_PASSWORD,
 	},
 	tls: {
-		ca: fs.readFileSync("./config/ca.crt"),
-		rejectUnauthorized: true,
+		ca: NODE_ENV === "production" ? null : fs.readFileSync("./ca.crt"),
+		rejectUnauthorized: NODE_ENV !== "production",
 	},
 });
 
