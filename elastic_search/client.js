@@ -13,7 +13,7 @@ const client = new Client({
 		password: ES_PASSWORD,
 	},
 	tls: {
-		ca: NODE_ENV === "production" ? null : fs.readFileSync("./ca.crt"),
+		ca: NODE_ENV === "production" ? undefined : fs.readFileSync("./ca.crt"),
 		rejectUnauthorized: NODE_ENV !== "production",
 	},
 });
