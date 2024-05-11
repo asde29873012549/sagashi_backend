@@ -13,6 +13,8 @@ RUN npm ci
 # Bundle app source inside Docker image
 COPY . .
 
+ENV NODE_ENV production
+
 # Your app binds to port 8080 so you'll use the EXPOSE instruction to have it mapped by the docker daemon
 EXPOSE 8080
 
