@@ -4,11 +4,13 @@ import { Client } from "@elastic/elasticsearch";
 
 dotenv.config();
 
+const { ES_SERVER, ES_USERNAME, ES_PASSWORD } = process.env;
+
 const client = new Client({
-	node: "https://localhost:9200",
+	node: ES_SERVER,
 	auth: {
-		username: process.env.ES_USERNAME,
-		password: process.env.ES_PASSWORD,
+		username: ES_USERNAME,
+		password: ES_PASSWORD,
 	},
 	tls: {
 		ca: fs.readFileSync("./config/ca.crt"),
