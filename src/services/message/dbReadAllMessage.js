@@ -27,7 +27,10 @@ export default async function dbReadMessage(req, res) {
                             [Op.lt]: time,
                         },
                         chatroom_id,
-						read_at: null
+						read_at: null,
+						sender_name: {
+							[Op.ne]: jwtUsername
+						}
                     },
                 },
                 { transaction: t },
